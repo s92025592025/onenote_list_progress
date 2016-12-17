@@ -3,7 +3,13 @@
 
 	window.onload = function (){
 		var oauth_data = getJSON("oauth2Info.json");
-		
+
+		window.location = "https://login.live.com/oauth20_authorize.srf"
+							+ "?response_type=code"
+							+ "&client_id=" + oauth_data.client_id
+							+ "&redirect_uri=https://login.live.com/oauth20_desktop.srf"
+							+ "&scope=office.onenote%20wl.signin%20wl.offline_access";
+		/*
 		var request = new XMLHttpRequest();
 		request.onload = function (){
 			console.log(this.responseText);
@@ -22,6 +28,7 @@
 							, false);
 
 		request.send();
+		*/
 	}
 
 
