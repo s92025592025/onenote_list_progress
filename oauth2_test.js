@@ -8,6 +8,9 @@
 
 	}
 
+
+	// pre: file should be a local json file path in String
+	// post: returns a json object from the file
 	function getJSON (file){
 		var json_file = new XMLHttpRequest();
 		var json_data = "";
