@@ -4,10 +4,12 @@
 	window.onload = function (){
 		var oauth_data = getJSON("oauth2Info.json");
 
+		// probable solution for authentication: http://manos.im/blog/electron-oauth-with-github/
+
 		window.location = "https://login.live.com/oauth20_authorize.srf"
 							+ "?response_type=code"
 							+ "&client_id=" + oauth_data.client_id
-							+ "&redirect_uri=https://login.live.com/oauth20_desktop.srf"
+							+ "&redirect_uri=file://index.html"
 							+ "&scope=office.onenote%20wl.signin%20wl.offline_access";
 		/*
 		var request = new XMLHttpRequest();
