@@ -52,8 +52,37 @@
 			}
 		}
 
+		// clean authWin object when the window is closed
+		authWin.on('closed', function (){
+			authWin = null;
+		});
+
+		// get the url whenever the page is changed
 		authWin.webContents.on('did-navigate', function (e, url){
 			authHandler(url);
 		});
 	}
+
+	// pre: code should be obtained from authPage()
+	// post: get the access and refresh token json file and save it
+	function getAccessToken(code){
+		var request = new XMLHttpRequest();
+
+		request.open("POST", "https://login.live.com/oauth20_token.srf");
+		request.onreadystatechange = function (){
+			console.log(this.status);
+		}
+		request.onload = function (){
+			
+		}
+
+		request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		request.send("grant_type=authorization_code"
+					+ "&client_id=" + getJSON("oauth2Info.json").client_id
+					+ "&client_secret=" + getJSON("oauth2Info.json").client_secret
+					+ "&" + code
+					+ "&redirect_uri=" + getJSON("oauth2Info.json").redirect_uri);
+
+	}
+
 })();
