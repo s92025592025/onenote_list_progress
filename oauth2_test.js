@@ -9,34 +9,6 @@
 		var oauth_data = getJSON("oauth2Info.json");
 
 		authPage();
-
-		// probable solution for authentication: http://manos.im/blog/electron-oauth-with-github/
-		/*
-		window.location = "https://login.live.com/oauth20_authorize.srf"
-							+ "?response_type=code"
-							+ "&client_id=" + oauth_data.client_id
-							+ "&redirect_uri=file://index.html"
-							+ "&scope=office.onenote%20wl.signin%20wl.offline_access";
-		/*
-		var request = new XMLHttpRequest();
-		request.onload = function (){
-			console.log(this.responseText);
-			console.log("finished");
-		}
-
-		request.onreadystatechange = function (){
-			console.log(this.status);
-		}
-
-		request.open("GET", "https://login.live.com/oauth20_authorize.srf"
-							+ "?response_type=code"
-							+ "&client_id=" + oauth_data.client_id
-							+ "&redirect_uri=https://login.live.com/oauth20_desktop.srf"
-							+ "&scope=office.onenote%20wl.signin%20wl.offline_access"
-							, false);
-
-		request.send();
-		*/
 	}
 
 
@@ -72,8 +44,10 @@
 		// 		 url
 		function authHandler(url){
 			var authReg = /^https:\/\/login\.live\.com\/oauth20_desktop\.srf\?code=\S+$/;
+			var codeReg = /code=\S+/;
 			if(authReg.test(url)){
 				console.log(url);
+				console.log(codeReg.exec(url));
 				authWin.destroy();
 			}
 		}
@@ -81,9 +55,5 @@
 		authWin.webContents.on('did-navigate', function (e, url){
 			authHandler(url);
 		});
-
-		
-
-
 	}
 })();
