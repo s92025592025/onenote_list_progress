@@ -66,8 +66,18 @@
 						+ "&redirect_uri=https://login.live.com/oauth20_desktop.srf"
 						+ "&scope=office.onenote%20wl.signin%20wl.offline_access");
 		authWin.show();
-	}
 
-	// should process the information return from authPage
-	function authHandler(url){}
+		// should process the information return from authPage
+		function authHandler(url){
+			console.log(url);
+		}
+
+		authWin.webContents.on('did-navigate', function (e, url){
+			authHandler(url);
+		});
+
+		
+
+
+	}
 })();
