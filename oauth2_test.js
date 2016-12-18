@@ -1,11 +1,17 @@
 (function (){
 	"use strict";
 
+	// must put "remote" behind require in order to work in 
+	// renderer(non-main) process
+	const {BrowserWindow} = require('electron').remote;
+
 	window.onload = function (){
 		var oauth_data = getJSON("oauth2Info.json");
 
-		// probable solution for authentication: http://manos.im/blog/electron-oauth-with-github/
+		authPage();
 
+		// probable solution for authentication: http://manos.im/blog/electron-oauth-with-github/
+		/*
 		window.location = "https://login.live.com/oauth20_authorize.srf"
 							+ "?response_type=code"
 							+ "&client_id=" + oauth_data.client_id
@@ -47,4 +53,21 @@
 
 		return json_data;
 	}
+
+	// should be showing the authentication window and allow user to login
+	function authPage (){
+		// create new window to show authentication login
+		var authWin = new BrowserWindow({width: 800, height: 600, show: false,
+						'node-integration': false, alwaysOnTop: true, frame: false});
+
+		authWin.loadURL("https://login.live.com/oauth20_authorize.srf"
+						+ "?response_type=code"
+						+ "&client_id=" + getJSON("oauth2Info.json").client_id
+						+ "&redirect_uri=https://login.live.com/oauth20_desktop.srf"
+						+ "&scope=office.onenote%20wl.signin%20wl.offline_access");
+		authWin.show();
+	}
+
+	// should process the information return from authPage
+	function authHandler(url){}
 })();
