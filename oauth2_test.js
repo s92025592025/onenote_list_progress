@@ -67,9 +67,15 @@
 						+ "&scope=office.onenote%20wl.signin%20wl.offline_access");
 		authWin.show();
 
-		// should process the information return from authPage
+		// pre: url should be the url that the authWin has navigated to
+		// post: process the input url, find token or error returned in the
+		// 		 url
 		function authHandler(url){
-			console.log(url);
+			var authReg = /^https:\/\/login\.live\.com\/oauth20_desktop\.srf\?code=\S+$/;
+			if(authReg.test(url)){
+				console.log(url);
+				authWin.destroy();
+			}
 		}
 
 		authWin.webContents.on('did-navigate', function (e, url){
