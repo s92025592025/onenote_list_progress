@@ -73,7 +73,7 @@
 			console.log(this.status);
 		}
 		request.onload = function (){
-			
+			// need to save to a local json file for further usage
 		}
 
 		request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
