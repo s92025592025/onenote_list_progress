@@ -35,7 +35,7 @@
 		authWin.loadURL("https://login.live.com/oauth20_authorize.srf"
 						+ "?response_type=code"
 						+ "&client_id=" + getJSON("oauth2Info.json").client_id
-						+ "&redirect_uri=https://login.live.com/oauth20_desktop.srf"
+						+ "&redirect_uri=" + getJSON("oauth2Info.json").redirect_uri
 						+ "&scope=office.onenote%20wl.signin%20wl.offline_access");
 		authWin.show();
 
@@ -44,10 +44,11 @@
 		// 		 url
 		function authHandler(url){
 			var authReg = /^https:\/\/login\.live\.com\/oauth20_desktop\.srf\?code=\S+$/;
-			var codeReg = /code=\S+/;
+			var codeReg = /code=[0-9a-zA-Z\-]+/;
 			if(authReg.test(url)){
 				console.log(url);
-				console.log(codeReg.exec(url));
+				console.log(codeReg.exec(url)[0]);
+				getAccessToken(codeReg.exec(url)[0]);
 				authWin.destroy();
 			}
 		}
@@ -68,12 +69,16 @@
 	function getAccessToken(code){
 		var request = new XMLHttpRequest();
 
-		request.open("POST", "https://login.live.com/oauth20_token.srf");
+		request.open("POST", "https://login.live.com/oauth20_token.srf", false);
 		request.onreadystatechange = function (){
 			console.log(this.status);
 		}
 		request.onload = function (){
 			// need to save to a local json file for further usage
+			var fs = require('file-system');
+			fs.readFile('oauth2Info.json', function (err, data){
+				console.log(JSON.parse(data));
+			});
 		}
 
 		request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
