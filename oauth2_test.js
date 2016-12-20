@@ -74,17 +74,21 @@
 			console.log(this.status);
 		}
 		request.onload = function (){
+			console.log(JSON.parse(this.responseText));
+			/*
 			// need to save to a local json file for further usage
 			var fs = require('file-system');
 			fs.readFile('oauth2Info.json', function (err, data){
 				console.log(JSON.parse(data));
 			});
+			*/
 		}
 
 		request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+		// don't send client secret in public settings(non-web server)
 		request.send("grant_type=authorization_code"
 					+ "&client_id=" + getJSON("oauth2Info.json").client_id
-					+ "&client_secret=" + getJSON("oauth2Info.json").client_secret
 					+ "&" + code
 					+ "&redirect_uri=" + getJSON("oauth2Info.json").redirect_uri);
 
