@@ -74,14 +74,13 @@
 			console.log(this.status);
 		}
 		request.onload = function (){
-			console.log(JSON.parse(this.responseText));
-			/*
-			// need to save to a local json file for further usage
 			var fs = require('file-system');
-			fs.readFile('oauth2Info.json', function (err, data){
-				console.log(JSON.parse(data));
-			});
-			*/
+			if(!fs.readFileSync("token.json").length){
+				console.log("nothing in here");
+				fs.writeFileSync("token.json", this.responseText);
+				console.log("save finished, display file content");
+				console.log(JSON.parse(fs.readFileSync("token.json")));
+			}
 		}
 
 		request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
