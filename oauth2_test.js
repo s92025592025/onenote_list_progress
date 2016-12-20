@@ -81,6 +81,8 @@
 				console.log("save finished, display file content");
 				console.log(JSON.parse(fs.readFileSync("token.json")));
 			}
+
+			getNewToken();
 		}
 
 		request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -90,7 +92,27 @@
 					+ "&client_id=" + getJSON("oauth2Info.json").client_id
 					+ "&" + code
 					+ "&redirect_uri=" + getJSON("oauth2Info.json").redirect_uri);
+	}
 
+	// pre: when access token expired
+	// post: get a new access token by refresh token
+	// It seemed like the access token won't change until it expire
+	function getNewToken(){
+		var fs = require("file-system");
+		var request = new XMLHttpRequest();
+		request.open("POST", "https://login.live.com/oauth20_token.srf");
+		request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+		request.onload = function (){
+			console.log("new token");
+			fs.writeFileSync("token.json", this.responseText);
+			console.log(JSON.parse(fs.readFileSync("token.json")));
+		}
+
+		request.send("grant_type=refresh_token"
+					+ "&client_id=" + JSON.parse(fs.readFileSync("oauth2Info.json")).client_id
+					+ "&redirect_uri=" + JSON.parse(fs.readFileSync("oauth2Info.json")).redirect_uri
+					+ "&refresh_token=" + JSON.parse(fs.readFileSync("token.json")).refresh_token);
 	}
 
 })();
