@@ -15,7 +15,7 @@ let win;
 //       before
 function startWindow(){
   if(!fs.readFileSync("token.json").length){ // if never logged in
-    win = new BrowserWindow({width: 800, height: 600});
+    win = new BrowserWindow({width: 800, height: 300});
     win.loadURL("file:///firstTimeLogin.html");
   }else{
     win = new BrowserWindow({width: 600, height: 800});
@@ -23,7 +23,7 @@ function startWindow(){
   }
 
   // open devtools
-  win.webContents.openDevTools();
+  //win.webContents.openDevTools();
 
   win.on('closed', function (){
     win = null;
