@@ -1,0 +1,5 @@
+{
+	"client_id": "680be201-9b27-4c1e-9e2e-d73e805aeb1a",
+	"app_secrets": "d0SsPSeVWmG0MJXqbiUCEQ6",
+	"redirect_url": "urn:ietf:wg:oauth:2.0:oob"
+}

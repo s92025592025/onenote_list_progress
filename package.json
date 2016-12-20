@@ -1,5 +1,8 @@
 {
-	"name": "onenote_list_progress",
-	"version": "0.0.1",
-	"main": "main.js"
+  "name": "onenote_list_progress",
+  "version": "0.0.1",
+  "main": "main.js",
+  "dependencies": {
+    "file-system": "^2.2.2"
+  }
 }
