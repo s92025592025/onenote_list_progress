@@ -72,7 +72,7 @@
 	 					console.log(e);
 	 				}
 	 			});
-	 			// navigate current window to ......
+	 			// navigate current window to ...... use BrowserWindow.fromId()
 	 		}else{
 	 			console.log(JSON.parse(this.responseText));
 	 		}
