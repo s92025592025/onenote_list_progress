@@ -67,15 +67,11 @@
 	 					console.log(e);
 	 				}
 	 			});
+
+	 			// thinking of using IPC to redirect page
+
 	 			// close auth window
 	 			authWin.destroy();
-	 			// find the title of the page that should be redirect after authentication
-	 			for(var i = 0; i < BrowserWindow.getAllWindows(); i++){
-	 				if(BrowserWindow.getAllWindows()[i].webContents.getTitle().trim().toUpperCase()
-	 					== 'Login Onenote'.toUpperCase()){
-	 					BrowserWindow.getAllWindows()[i].loadURL('file:///index.html');
-	 				}
-	 			}
 	 		}else{
 	 			console.log(JSON.parse(this.responseText));
 	 		}
