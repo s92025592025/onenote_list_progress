@@ -32,6 +32,9 @@ function startWindow(){
 
 // ======= This block contains all things relate to ipc ========= //
 
+// pre: when the main windows need to be changed
+// post: change the main window to the page and the size renderer process
+//       desire
 ipcMain.on('redirect-main-win', function(e, url, width, height){
   win.loadURL(url);
   win.setSize(width, height);
@@ -42,6 +45,7 @@ ipcMain.on('redirect-main-win', function(e, url, width, height){
 
 
 // ======= This block contains all things relate to app ========= //
+
 // show the first window when the electorn app is ready
 app.on('ready', startWindow);
 

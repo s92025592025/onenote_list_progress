@@ -30,10 +30,8 @@
 	 	// post: analysis the passed url to find code for further authorization
 	 	function filterURL (url){
 	 		var codeRex = /code=[0-9a-zA-Z\-]+/;
-	 		console.log(codeRex.test(url));
 	 		if(codeRex.test(url)){
 	 			// start authentication process
-	 			console.log(codeRex.exec(url)[0]);
 	 			getTokenInfo(codeRex.exec(url)[0], authWin);
 	 		}
 	 	}
