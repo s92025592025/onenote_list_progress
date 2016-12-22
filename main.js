@@ -1,5 +1,5 @@
 // import app and BrowserWindow from 'electron' package
-const {app, BrowserWindow} = require('electron');
+const {app, BrowserWindow, ipcMain} = require('electron');
 // import path
 const path = require('path');
 // import file-system
@@ -30,6 +30,18 @@ function startWindow(){
   });
 }
 
+// ======= This block contains all things relate to ipc ========= //
+
+ipcMain.on('redirect-main-win', function(e, url, width, height){
+  win.loadURL(url);
+  win.setSize(width, height);
+  e.returnValue = "done";
+});
+
+// ======= This block contains all things relate to ipc ========= //
+
+
+// ======= This block contains all things relate to app ========= //
 // show the first window when the electorn app is ready
 app.on('ready', startWindow);
 
@@ -49,3 +61,5 @@ app.on('active', function (){
     startWindow();
   }
 });
+
+// ======= This block contains all things relate to app ========= //

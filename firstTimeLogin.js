@@ -2,6 +2,7 @@
 	'use strict';
 	 const fs = require('file-system');
 	 const {BrowserWindow} = require('electron').remote;
+	 const {ipcRenderer} = require('electron');
 
 	 window.onload = function (){
 	 	document.getElementById("login").onclick = startLoginProcess;
@@ -67,11 +68,12 @@
 	 					console.log(e);
 	 				}
 	 			});
-
-	 			// thinking of using IPC to redirect page
-
-	 			// close auth window
-	 			authWin.destroy();
+	 			// tell main process to redirect main window, return done when it is finished
+	 			// if done, close auth window
+	 			if(ipcRenderer.sendSync('redirect-main-win', 'file:///index.html', 600, 800)
+	 				== 'done'){
+	 				authWin.destroy();
+	 			}
 	 		}else{
 	 			console.log(JSON.parse(this.responseText));
 	 		}
