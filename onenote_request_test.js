@@ -39,11 +39,37 @@
 			if(this.status == 200 || this.status == 0){
 				// will be returned as a JSON text
 				console.log(JSON.parse(this.responseText));
+				// find the notebook I want, then show its section
+				for(var i = 0; i < JSON.parse(this.responseText).value.length; i++){
+					if(JSON.parse(this.responseText).value[i].name == 'Check Lists'){
+						getAllSection(JSON.parse(this.responseText).value[i].id);
+					}
+				}
 			}else if(this.status == 401){
 				getAccessToken();
 				getAllNoteBooks();
 			}else{
 				console.log(JSON.parse(this.responseText));
+			}
+		};
+
+		request.send();
+	}
+
+	// get the list of all the sections in a notebook
+	function getAllSection(notebookId){
+		var request = new XMLHttpRequest();
+		request.open("GET", ONENOTE_ROOT + "notebooks/" + notebookId + "/sections", false);
+		request.setRequestHeader("Authorization", 
+				"Bearer " + JSON.parse(fs.readFileSync("token.json")).access_token);
+		request.onload = function (){
+			if(this.status == 200 || this.status == 0){
+				console.log(JSON.parse(this.responseText));
+			}else if(this.status == 401){
+				getAccessToken();
+				getAllSection();
+			}else{
+				console.log(this.status);
 			}
 		};
 
