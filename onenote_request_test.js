@@ -2,9 +2,11 @@
 	'use strict';
 
 	const fs = require('file-system');
+	const ONENOTE_ROOT = "https://www.onenote.com/api/v1.0/me/notes/";
 
 	window.onload = function (){
 		// run the methods
+		getAllNoteBooks();
 	}
 
 	// pre: whenever the api request gave a 401 status
@@ -30,6 +32,20 @@
 	// this will request for all the notebooks the user has
 	function getAllNoteBooks () {
 		var request = new XMLHttpRequest();
-		request.open("GET", "", false);
+		request.open("GET", ONENOTE_ROOT + "notebooks", false);
+		request.setRequestHeader("Authorization", 
+				"Bearer " + JSON.parse(fs.readFileSync("token.json")).access_token);
+		request.onload = function (){
+			if(this.status == 200 || this.status == 0){
+				console.log(this.responseText);
+			}else if(this.status == 401){
+				getAccessToken();
+				getAllNoteBooks();
+			}else{
+				console.log(this.responseText);
+			}
+		};
+
+		request.send();
 	}
 })();
