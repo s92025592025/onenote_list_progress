@@ -90,9 +90,34 @@
 		request.onload = function (){
 			if(this.status == 200 || this.status == 0){
 				console.log(JSON.parse(this.responseText));
+				for(var i = 0; i < JSON.parse(this.responseText).value.length; i++){
+					if(JSON.parse(this.responseText).value[i].title == "20161216 Grocery"){
+						getPageDetail(JSON.parse(this.responseText).value[i].id);
+					}
+				}
 			}else if(this.status == 401){
 				getAccessToken();
 				getAllPages(sectionId);
+			}else{
+				console.log(this.status);
+			}
+		};
+
+		request.send();
+	}
+
+	// get the detailed informarion in the page
+	function getPageDetail (pageId){
+		var request = new XMLHttpRequest();
+		request.open("GET", ONENOTE_ROOT + "pages/" + pageId + "/content?includeIDS=true");
+		request.setRequestHeader("Authorization", 
+				"Bearer " + JSON.parse(fs.readFileSync("token.json")).access_token);
+		request.onload = function (){
+			if(this.status == 200 || this.status == 0){
+				console.log(this.responseText);
+			}else if(this.status == 401){
+				getAccessToken();
+				getPageDetail(pageId);
 			}else{
 				console.log(this.status);
 			}
