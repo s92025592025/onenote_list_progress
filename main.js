@@ -1,5 +1,5 @@
 // import app and BrowserWindow from 'electron' package
-const {app, BrowserWindow} = require('electron');
+const {app, BrowserWindow, ipcMain} = require('electron');
 // import path
 const path = require('path');
 // import file-system
@@ -15,7 +15,7 @@ let win;
 //       before
 function startWindow(){
   if(!fs.readFileSync("token.json").length){ // if never logged in
-    win = new BrowserWindow({width: 800, height: 600});
+    win = new BrowserWindow({width: 800, height: 300});
     win.loadURL("file:///firstTimeLogin.html");
   }else{
     win = new BrowserWindow({width: 600, height: 800});
@@ -29,6 +29,22 @@ function startWindow(){
     win = null;
   });
 }
+
+// ======= This block contains all things relate to ipc ========= //
+
+// pre: when the main windows need to be changed
+// post: change the main window to the page and the size renderer process
+//       desire
+ipcMain.on('redirect-main-win', function(e, url, width, height){
+  win.loadURL(url);
+  win.setSize(width, height);
+  e.returnValue = "done";
+});
+
+// ======= This block contains all things relate to ipc ========= //
+
+
+// ======= This block contains all things relate to app ========= //
 
 // show the first window when the electorn app is ready
 app.on('ready', startWindow);
@@ -49,3 +65,5 @@ app.on('active', function (){
     startWindow();
   }
 });
+
+// ======= This block contains all things relate to app ========= //
