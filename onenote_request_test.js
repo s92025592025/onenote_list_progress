@@ -57,7 +57,7 @@
 	}
 
 	// get the list of all the sections in a notebook
-	function getAllSection(notebookId){
+	function getAllSection (notebookId){
 		var request = new XMLHttpRequest();
 		request.open("GET", ONENOTE_ROOT + "notebooks/" + notebookId + "/sections", false);
 		request.setRequestHeader("Authorization", 
@@ -65,9 +65,14 @@
 		request.onload = function (){
 			if(this.status == 200 || this.status == 0){
 				console.log(JSON.parse(this.responseText));
+				for(var i = 0; i < JSON.parse(this.responseText).value.length; i++){
+					if(JSON.parse(this.responseText).value[i].name == 'Groceries'){
+						getAllPages(JSON.parse(this.responseText).value[i].id);
+					}
+				}
 			}else if(this.status == 401){
 				getAccessToken();
-				getAllSection();
+				getAllSection(notebookId);
 			}else{
 				console.log(this.status);
 			}
@@ -75,4 +80,26 @@
 
 		request.send();
 	}
+
+	// get all the pages in the section
+	function getAllPages (sectionId){
+		var request = new XMLHttpRequest();
+		request.open("GET", ONENOTE_ROOT + "sections/" + sectionId + "/pages", false);
+		request.setRequestHeader("Authorization", 
+				"Bearer " + JSON.parse(fs.readFileSync("token.json")).access_token);
+		request.onload = function (){
+			if(this.status == 200 || this.status == 0){
+				console.log(JSON.parse(this.responseText));
+			}else if(this.status == 401){
+				getAccessToken();
+				getAllPages(sectionId);
+			}else{
+				console.log(this.status);
+			}
+		};
+
+		request.send();
+	}
+
+	// NOTE: may put the "request" in single call
 })();
