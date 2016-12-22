@@ -24,8 +24,8 @@
 		};
 
 		request.send("grant_type=refresh_token"
-					+ "&client_id=" + JSON.parse(fs.readFileSync("oauth20_token.json")).client_id
-					+ "&redirect_uri=" + JSON.parse(fs.readFileSync("oauth20_token.json")).redirect_uri
+					+ "&client_id=" + JSON.parse(fs.readFileSync("oauth2Info.json")).client_id
+					+ "&redirect_uri=" + JSON.parse(fs.readFileSync("oauth2Info.json")).redirect_uri
 					+ "&refresh_token=" + JSON.parse(fs.readFileSync("token.json")).refresh_token);
 	}
 
@@ -37,12 +37,13 @@
 				"Bearer " + JSON.parse(fs.readFileSync("token.json")).access_token);
 		request.onload = function (){
 			if(this.status == 200 || this.status == 0){
-				console.log(this.responseText);
+				// will be returned as a JSON text
+				console.log(JSON.parse(this.responseText));
 			}else if(this.status == 401){
 				getAccessToken();
 				getAllNoteBooks();
 			}else{
-				console.log(this.responseText);
+				console.log(JSON.parse(this.responseText));
 			}
 		};
 
