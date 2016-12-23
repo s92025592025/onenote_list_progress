@@ -13,10 +13,11 @@ const menuTemplate = [
   {
     label: 'Settings',
     click() {
-      var settingWin = new BrowserWindow({width: 800, height: 600, maximizable: false,
+      var settingWin = new BrowserWindow({width: 600, height: 800, maximizable: false,
                                           minimizable: false, darkTheme: true, show: false});
       settingWin.setMenu(null);
       settingWin.loadURL("file:///Settings.html");
+      //settingWin.webContents.openDevTools();
 
       settingWin.show();
 

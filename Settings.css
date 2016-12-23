@@ -1,0 +1,28 @@
+body {
+	background-color: #6C6C6C;
+	color: white;
+	font-family: sans-serif;
+}
+
+#notebook-track {
+	width: 100%;
+	background-color: white;
+	color: black;
+	margin-right: auto;
+	margin-left: auto;
+	border-radius: 5px;
+}
+
+.list {
+	list-style-type: none;
+}
+
+li {
+	overflow: hidden;
+}
+
+li div {
+	float: right;
+	display: inline-block;
+}
+

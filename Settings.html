@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Settings</title>
+	<!-- JQuery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+	<!-- Bootstrapt -->
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+	<!-- self define stuffs -->
+	<link rel="stylesheet" type="text/css" href="Settings.css">
+	<script type="text/javascript" src="Settings.js"></script>
+</head>
+<body>
+	<div class="container-fluid">
+		<h1>Settings</h1>
+		<hr>
+		<h2>Notebooks to track</h2>
+		<div id="notebook-track" class="panel-group">
+			<div id="notebook-list" class="panel">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						<a href="#notebookID" data-toggle="collapse"><span class="glyphicon glyphicon-book"></span> Notebook 1</a>
+					</h3>
+				</div>
+				<div id="notebookID" class="section ">
+					<ul class="list list-group">
+						<li class="list-group-item" id="sectionID"><span class="glyphicon glyphicon-tag"></span> Section 1 <div><input type="radio" name="today">Today <input type="checkbox" name="track" value="sectionID">Track</div></li>
+						<li class="list-group-item"><span class="glyphicon glyphicon-tag"></span> Section 2 <div><input type="radio" name="today">Today <input type="checkbox" name="track" value="sectionID">Track</div></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
