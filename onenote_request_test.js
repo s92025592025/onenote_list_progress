@@ -115,6 +115,7 @@
 		request.onload = function (){
 			if(this.status == 200 || this.status == 0){
 				console.log(this.responseText);
+				// how to parse HTML to DOM object: http://stackoverflow.com/questions/10585029/parse-a-html-string-with-js
 			}else if(this.status == 401){
 				getAccessToken();
 				getPageDetail(pageId);
