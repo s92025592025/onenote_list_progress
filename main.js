@@ -17,7 +17,7 @@ const menuTemplate = [
                                           minimizable: false, darkTheme: true, show: false});
       settingWin.setMenu(null);
       settingWin.loadURL("file:///Settings.html");
-      //settingWin.webContents.openDevTools();
+      settingWin.webContents.openDevTools();
 
       settingWin.show();
 
