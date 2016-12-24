@@ -13,7 +13,7 @@
 	//		 section
 	function loadNotebookList() {
 		var notebookJson = onenoteJSON("notebooks");
-		var notebook_listDOM = document.getElementById('notebook-list');
+		var notebook_listDOM = document.getElementById('notebook-track');
 
 		for(var i = 0; i < notebookJson.value.length; i++){
 			var doms = sectionLists(notebookJson.value[i].id,
@@ -21,22 +21,75 @@
 								  	onenoteJSON('notebooks/' 
 								   				+ notebookJson.value[i].id 
 								   				+ '/sections'));
+			var notebook_list = createFullElement('div', {class: 'panel notebook-list'})
 			for(var s = 0; s < doms.length; s++){
-				notebook_listDOM.append(doms[i]);
+				notebook_list.appendChild(doms[s]);
 			}
+			notebook_listDOM.appendChild(notebook_list);
 		}
 	}
 
 	// pre: when a notebook is actually in the account
 	// post: return a array of dom
 	function sectionLists(id, name, sectionJson){
-		var panel_heading = document.createElement('div');
-		var panel_title = document.createElement('h3');
-		var a = document.createElement('a');
-		var section = document.createElement('div');
-		var list = document.createElement('ul');
+		var panel_heading = createFullElement('div', {class: 'panel-heading'});
+		var panel_title = createFullElement('h3', {class: 'panel-title'});
+		var a = createFullElement('a', {href: "#" + name.replace(/\s/g, "_"), "data-toggle": 'collapse'});
+		var section = createFullElement('div', {id: name.replace(/\s/g, "_"), class: 'sections'});
+		var list = createFullElement('ul', {class: 'list list-group'});
 
-		// next step, input the attributes
+		// DOMs in panel-heading
+		a.appendChild(createFullElement('span', {class: 'glyphicon glyphicon-book'}));
+		a.appendChild(document.createTextNode(" " + name));
+		panel_title.appendChild(a);
+		panel_heading.appendChild(panel_title);
+
+		// DOMs in section
+		for(var i = 0; i < sectionJson.value.length; i++){
+			var li = createFullElement('li', {class: 'list-group-item', 
+											  id   : sectionJson.value[i].id});
+			var span = createFullElement('span', {class: 'glyphicon glyphicon-tag'});
+			var div = document.createElement('div');
+			var radioBtn = createFullElement('input', {type : 'radio', 
+											 		   name : 'today',
+													   value: sectionJson.value[i].id});
+			var checkBox = createFullElement('input', {type : 'checkbox',
+													 name : 'track',
+													 value: sectionJson.value[i].id});
+			// DOMs in li > div
+			div.appendChild(radioBtn);
+			div.appendChild(document.createTextNode("Today "));
+			div.appendChild(checkBox);
+			div.appendChild(document.createTextNode("Track"))
+
+			// DOMs in li
+			li.appendChild(span);
+			li.appendChild(document.createTextNode(sectionJson.value[i].name));
+			li.appendChild(div);
+
+			// DOMs in ul
+			list.appendChild(li);
+		}
+
+		// DOMs in section
+		section.appendChild(list);
+
+		return [panel_heading, section];
+	}
+
+	// pre: when needed to create a HTML element
+	// post: create a HTML DOM of tag, and set up attribute mentioned,
+	//		 in attr(js object)
+	function createFullElement(tag, attr){
+		var dom = document.createElement(tag);
+
+		for(var key in attr){
+			if(attr.hasOwnProperty(key)){
+				dom.setAttribute(key, attr[key]);
+			}
+		}
+
+		return dom;
 	}
 
 	// pre: when have token, and trying to request for notebook and
