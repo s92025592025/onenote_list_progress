@@ -13,7 +13,30 @@
 	//		 section
 	function loadNotebookList() {
 		var notebookJson = onenoteJSON("notebooks");
-		
+		var notebook_listDOM = document.getElementById('notebook-list');
+
+		for(var i = 0; i < notebookJson.value.length; i++){
+			var doms = sectionLists(notebookJson.value[i].id,
+								   	notebookJson.value[i].name,
+								  	onenoteJSON('notebooks/' 
+								   				+ notebookJson.value[i].id 
+								   				+ '/sections'));
+			for(var s = 0; s < doms.length; s++){
+				notebook_listDOM.append(doms[i]);
+			}
+		}
+	}
+
+	// pre: when a notebook is actually in the account
+	// post: return a array of dom
+	function sectionLists(id, name, sectionJson){
+		var panel_heading = document.createElement('div');
+		var panel_title = document.createElement('h3');
+		var a = document.createElement('a');
+		var section = document.createElement('div');
+		var list = document.createElement('ul');
+
+		// next step, input the attributes
 	}
 
 	// pre: when have token, and trying to request for notebook and
