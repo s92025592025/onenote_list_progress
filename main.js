@@ -1,5 +1,5 @@
 // import app and BrowserWindow from 'electron' package
-const {app, BrowserWindow, ipcMain} = require('electron');
+const {app, BrowserWindow, ipcMain, Menu} = require('electron');
 // import path
 const path = require('path');
 // import file-system
@@ -9,6 +9,43 @@ const fs = require("file-system");
 // getting cleaned by garbage collection
 let win;
 
+const menuTemplate = [
+  {
+    label: 'Settings',
+    click() {
+      var settingWin = new BrowserWindow({width: 600, height: 800, maximizable: false,
+                                          minimizable: false, darkTheme: true, show: false});
+      var loadingWin = new BrowserWindow({width: 300, height:100, maximizable: false,
+                                          minimizable: false, frame: false, alwaysOnTop: true});
+      loadingWin.loadURL('file:///loading.html');
+      settingWin.setMenu(null);
+      settingWin.loadURL("file:///Settings.html");
+      settingWin.webContents.openDevTools();
+
+      settingWin.on('ready-to-show', function (){
+        loadingWin.close();
+        settingWin.show();
+        loadingWin = null;
+      });
+
+      settingWin.on('closed', function (){
+        settingWin = null;
+      });
+    }
+  },
+  {
+    label: 'About',
+    submenu: [
+      {
+        label: 'About this project',
+        click() { 
+          require('electron').shell.openExternal('https://github.com/s92025592025/onenote_list_progress');
+        }
+      }
+    ]
+  }
+  ];
+
 // pre: When the appliction is started
 // post: Will Choose to open different window according to
 //       whether the user has logged in his/her onenote account
@@ -16,9 +53,12 @@ let win;
 function startWindow(){
   if(!fs.readFileSync("token.json").length){ // if never logged in
     win = new BrowserWindow({width: 800, height: 300});
+    win.setMenu(null);
     win.loadURL("file:///firstTimeLogin.html");
   }else{
     win = new BrowserWindow({width: 600, height: 800});
+    win.setMenu(null);
+    win.setMenu(Menu.buildFromTemplate(menuTemplate));
     win.loadURL("file:///index.html");
   }
 
@@ -38,6 +78,8 @@ function startWindow(){
 ipcMain.on('redirect-main-win', function(e, url, width, height){
   win.loadURL(url);
   win.setSize(width, height);
+  win.setMenu(null);
+  win.setMenu(Menu.buildFromTemplate(menuTemplate));
   e.returnValue = "done";
 });
 
