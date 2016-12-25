@@ -2,17 +2,44 @@
 	'use strict';
 
 	const fs = require('file-system');
+	const remote = require('electron').remote;
 	const ONENOTE_ROOT = 'https://www.onenote.com/api/v1.0/me/notes/';
 
 	window.onload = function (){
 		loadNotebookList();
+		document.getElementById('apply').onclick = getSettings;
+		document.getElementById('cancel').onclick = function (){
+			remote.getCurrentWindow().close();
+		};
+		document.getElementById('comfirm').onclick = function (){
+			getSettings();
+			remote.getCurrentWindow().close();
+		};
 	};
 
 	// pre: when the user pressed 'comfirm' or 'apply'
 	// post: will save the user configured settings in
 	//		 notebooks.json
 	function getSettings (){
+		var todays = document.querySelectorAll('input[name="today"]');
+		var tracks = document.querySelectorAll('input[name="track"]');
+		var trackIds = [];
 
+		var settings = JSON.parse(fs.readFileSync("notebooks.json"));
+
+		for(var i = 0; i < todays.length; i++){
+			if(todays[i].checked){
+				settings.today_progress = todays[i].value;
+			}
+
+			if(tracks[i].checked){
+				trackIds.push(tracks[i].value);
+			}
+		}
+
+		settings.misc_progress = trackIds;
+
+		fs.writeFileSync("notebooks.json", JSON.stringify(settings));
 	}
 
 	// pre: when the Settings.html is fully loaded
