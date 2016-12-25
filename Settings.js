@@ -7,6 +7,12 @@
 
 	window.onload = function (){
 		loadNotebookList();
+		for(var i = 0; i < document.querySelectorAll('#refresh-time option').length; i++){
+			if(document.querySelectorAll('#refresh-time option')[i].value 
+				== JSON.parse(fs.readFileSync('notebooks.json')).refresh_time){
+				document.querySelectorAll('#refresh-time option')[i].setAttribute('selected', 'selected');
+			}
+		}
 		document.getElementById('apply').onclick = getSettings;
 		document.getElementById('cancel').onclick = function (){
 			remote.getCurrentWindow().close();
@@ -23,6 +29,7 @@
 	function getSettings (){
 		var todays = document.querySelectorAll('input[name="today"]');
 		var tracks = document.querySelectorAll('input[name="track"]');
+		var refresh_times = document.querySelectorAll('#refresh-time option')
 		var trackIds = [];
 
 		var settings = JSON.parse(fs.readFileSync("notebooks.json"));
@@ -34,6 +41,12 @@
 
 			if(tracks[i].checked){
 				trackIds.push(tracks[i].value);
+			}
+		}
+
+		for(var i = 0; i < refresh_times.length; i++){
+			if(refresh_times[i].selected){
+				settings.refresh_time = refresh_times[i].value;
 			}
 		}
 
