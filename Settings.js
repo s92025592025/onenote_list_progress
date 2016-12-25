@@ -8,6 +8,13 @@
 		loadNotebookList();
 	};
 
+	// pre: when the user pressed 'comfirm' or 'apply'
+	// post: will save the user configured settings in
+	//		 notebooks.json
+	function getSettings (){
+
+	}
+
 	// pre: when the Settings.html is fully loaded
 	// post: display a list of notebooks and their sections under "Notebooks to Track"
 	//		 section
@@ -29,7 +36,8 @@
 		}
 	}
 
-	// pre: when a notebook is actually in the account
+	// pre: should pass in the notebook id as id, notebook name as name
+	//		and the json of all section details in the notebook
 	// post: return a array of dom
 	function sectionLists(id, name, sectionJson){
 		var panel_heading = createFullElement('div', {class: 'panel-heading'});
@@ -93,7 +101,8 @@
 	}
 
 	// pre: when have token, and trying to request for notebook and
-	//		section data only
+	//		section data only, and shoudl pass in the path that specified
+	//		in onenote api
 	// post: return the lists of notebook and section in JSON format
 	function onenoteJSON (path){
 		var json = '';

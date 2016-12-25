@@ -26,3 +26,8 @@ li div {
 	display: inline-block;
 }
 
+#buttons {
+	text-align: right;
+	margin-bottom: 10px;
+}
+
