@@ -89,8 +89,17 @@
 											 		   name : 'today',
 													   value: sectionJson.value[i].id});
 			var checkBox = createFullElement('input', {type : 'checkbox',
-													 name : 'track',
-													 value: sectionJson.value[i].id});
+													   name : 'track',
+													   value: sectionJson.value[i].id});
+			// refer to past selected config
+			if(JSON.parse(fs.readFileSync("notebooks.json")).today_progress == sectionJson.value[i].id){
+				radioBtn.setAttribute("checked", "checked");
+			}
+
+			if(JSON.parse(fs.readFileSync("notebooks.json")).misc_progress.includes(sectionJson.value[i].id)){
+				checkBox.setAttribute("checked", "checked");
+			}
+
 			// DOMs in li > div
 			div.appendChild(radioBtn);
 			div.appendChild(document.createTextNode("Today "));
