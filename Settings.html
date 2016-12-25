@@ -23,11 +23,32 @@
 <body>
 	<div class="container-fluid">
 		<h1>Settings</h1>
+
 		<hr>
+
 		<h2>Notebooks to track</h2>
 		<div id="notebook-track" class="panel-group">
 		</div>
+
 		<hr>
+
+		<h2>Refresh Frequency</h2>
+		<form class="form-inline">
+			<div class="form-group">
+				<label>Refresh progress every </label>
+					<select class="form-control">
+						<option>5</option>
+						<option>10</option>
+						<option>15</option>
+						<option>30</option>
+						<option>60</option>
+					</select>
+				<label> minutes.</label>
+			</div>
+		</form>
+
+		<hr>
+
 		<div id="buttons">
 			<button id="comfirm" class="btn btn-default">Comfirm</button>
 			<button id="apply" class="btn btn-default">Apply</button>
