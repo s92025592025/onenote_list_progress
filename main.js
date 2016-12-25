@@ -13,7 +13,7 @@ const menuTemplate = [
   {
     label: 'Settings',
     click() {
-      var settingWin = new BrowserWindow({width: 600, height: 800, maximizable: false,
+      var settingWin = new BrowserWindow({parent: win, width: 600, height: 800, maximizable: false,
                                           minimizable: false, darkTheme: true, show: false});
       var loadingWin = new BrowserWindow({width: 300, height:100, maximizable: false,
                                           minimizable: false, frame: false, alwaysOnTop: true});
@@ -26,6 +26,10 @@ const menuTemplate = [
         loadingWin.close();
         settingWin.show();
         loadingWin = null;
+      });
+
+      settingWin.on('close', function (){
+        settingWin.getParentWindow().reload();
       });
 
       settingWin.on('closed', function (){
@@ -60,10 +64,6 @@ function startWindow(){
     win.setMenu(null);
     win.setMenu(Menu.buildFromTemplate(menuTemplate));
     win.loadURL("file:///index.html");
-    // refresh the page when the page is refocused
-    win.on('focus', function (){
-      win.reload();
-    });
   }
 
   // open devtools
