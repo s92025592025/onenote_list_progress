@@ -16,25 +16,21 @@
 		}
 		document.getElementById('apply').onclick = getSettings;
 		document.getElementById('cancel').onclick = function (){
-			closeSetting();
+			remote.getCurrentWindow().close();
 		};
 		document.getElementById('comfirm').onclick = function (){
 			getSettings();
-			closeSetting();
+			remote.getCurrentWindow().close();
 		};
 	};
 
-	// pre: when the today is selected
-	// post: allow the window to close when Today is selected
-	//		 , vise versa when not
-	function closeSetting() {
+	window.onbeforeunload = function (e){
 		if(!JSON.parse(fs.readFileSync('notebooks.json')).today_progress.trim()){
 			dialog.showMessageBox(remote.getCurrentWindow(), {title: "Oops!", buttons:[], type: "warning", 
 							      message: "Please at least select one for today"});
-		}else{
-			remote.getCurrentWindow().close();
+			e.returnValue = false;
 		}
-	}
+	};
 
 	// pre: when the user pressed 'comfirm' or 'apply'
 	// post: will save the user configured settings in

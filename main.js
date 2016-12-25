@@ -1,5 +1,5 @@
 // import app and BrowserWindow from 'electron' package
-const {app, BrowserWindow, ipcMain, Menu, dialog} = require('electron');
+const {app, BrowserWindow, ipcMain, Menu} = require('electron');
 // import path
 const path = require('path');
 // import file-system
@@ -29,12 +29,7 @@ const menuTemplate = [
       });
 
       settingWin.on('closed', function (){
-        if(!JSON.parse(fs.readFileSync('notebooks.json')).today_progress.trim()){
-          dialog.showMessageBox(settingWin, {title: "Oops!", buttons:[], type: "warning", 
-                                message: "Please at least select one for today"});
-        }else{
-          settingWin = null;
-        }
+        settingWin = null;
       });
     }
   },
