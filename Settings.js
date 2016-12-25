@@ -1,6 +1,7 @@
 (function (){
 	'use strict';
 
+	const {dialog} = require('electron').remote;
 	const fs = require('file-system');
 	const remote = require('electron').remote;
 	const ONENOTE_ROOT = 'https://www.onenote.com/api/v1.0/me/notes/';
@@ -15,13 +16,25 @@
 		}
 		document.getElementById('apply').onclick = getSettings;
 		document.getElementById('cancel').onclick = function (){
-			remote.getCurrentWindow().close();
+			closeSetting();
 		};
 		document.getElementById('comfirm').onclick = function (){
 			getSettings();
-			remote.getCurrentWindow().close();
+			closeSetting();
 		};
 	};
+
+	// pre: when the today is selected
+	// post: allow the window to close when Today is selected
+	//		 , vise versa when not
+	function closeSetting() {
+		if(!JSON.parse(fs.readFileSync('notebooks.json')).today_progress.trim()){
+			dialog.showMessageBox(remote.getCurrentWindow(), {title: "Oops!", buttons:[], type: "warning", 
+							      message: "Please at least select one for today"});
+		}else{
+			remote.getCurrentWindow().close();
+		}
+	}
 
 	// pre: when the user pressed 'comfirm' or 'apply'
 	// post: will save the user configured settings in
