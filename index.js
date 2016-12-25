@@ -7,7 +7,7 @@
 	const {BrowserWindow} = require('electron').remote;
 	const fs = require('file-system');
 
-	window.onload() = function (){
+	window.onload = function (){
 		if(!JSON.parse(fs.readFileSync('notebooks.json')).today_progress){
 			// show settings page
 			var settingWin = new BrowserWindow({width: 600, height: 800, maximizable: false,
