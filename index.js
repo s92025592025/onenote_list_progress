@@ -70,15 +70,12 @@
 		function updateProgress(sectionPages, progressBar = todayProgress){
 			for(var i = 0; i < JSON.parse(sectionPages).value.length; i++){
 				if(Date.parse(JSON.parse(sectionPages).value[i].title) 
-					&& Math.abs((new Date(JSON.parse(sectionPages).value[i].title)) - (new Date("2016/12/07")) 
-						<= (1000 * 60 * 60 * 24))){
+					&& JSON.parse(sectionPages).value[i].title == "2016/12/07"){
 					console.log("once");
-					onenoteRequest('pages/' + JSON.parse(sectionPages).value[i].id, function (content) {
-						var dom = document.createElement('html');
-						dom.innerHTML = content;
-						progressBar.animate(dom.querySelectorAll('p[data-tag="to-do:complete"]').length 
-											/ (dom.querySelectorAll('p[data-tag="to-do"]').length 
-												+ dom.querySelectorAll('p[data-tag="to-do:complete"]').length));
+					onenoteRequest('pages/' + JSON.parse(sectionPages).value[i].id + '/content', function (content) {
+						var parser = new DOMParser();
+						var dom = parser.parseFromString(content, 'text/html');
+						progressBar.animate(dom.querySelectorAll('[data-tag="to-do:completed"]').length / dom.querySelectorAll('[data-tag]').length);
 					});
 				}
 			}
