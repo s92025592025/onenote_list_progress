@@ -63,9 +63,13 @@
 		todayProgress.text.style.fontSize = '60pt';
 		todayProgress.animate(0.0);
 
-		onenoteRequest('sections/' 
+		var timer;
+
+		timer = setInterval(function (){
+			onenoteRequest('sections/' 
 						+ JSON.parse(fs.readFileSync('notebooks.json')).today_progress
 						+ "/pages", updateProgress);
+			}, JSON.parse(fs.readFileSync('notebooks.json').refresh_time * 60 * 1000));
 
 		function updateProgress(sectionPages, progressBar = todayProgress){
 			for(var i = 0; i < JSON.parse(sectionPages).value.length; i++){
