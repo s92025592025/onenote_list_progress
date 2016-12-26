@@ -63,6 +63,10 @@
 		todayProgress.text.style.fontSize = '60pt';
 		todayProgress.animate(0.0);
 
+		onenoteRequest('sections/' 
+						+ JSON.parse(fs.readFileSync('notebooks.json')).today_progress
+						+ "/pages", updateProgress);
+
 		var timer;
 
 		timer = setInterval(function (){
@@ -89,7 +93,7 @@
 	// pre: the sections the user specified to be tracked, title needs to
 	// 		have any date format in []
 	// post: show a list of progress in a linear progress bar
-	function showMisc(json){}
+	function showMisc(){}
 
 	// pre: path should only vaild request path specifed in onenote api,
 	//		should also pass in a funciton as nextStep that will be executed
