@@ -4,8 +4,10 @@
 
 (function (){
 	'use strict';
+
 	const {BrowserWindow} = require('electron').remote;
 	const fs = require('file-system');
+	const ProgressBar = require('progressbar.js');
 
 	window.onload = function (){
 		if(!JSON.parse(fs.readFileSync('notebooks.json')).today_progress){
@@ -29,7 +31,18 @@
 		      settingWin = null;
 		    });
 		}else{
-
+			showToday();
+			showMisc();
 		}
 	};
+
+	// pre: when user do have a section to store the checklist for today,
+	//		the page title should contain only data in any format
+	// post: show the progress of today in a circle progressbar
+	function showToday(){}
+
+	// pre: the sections the user specified to be tracked, title needs to
+	// 		have any date format in []
+	// post: show a list of progress in a linear progress bar
+	function showMisc(){}
 })();
