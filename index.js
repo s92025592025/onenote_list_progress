@@ -70,7 +70,7 @@
 		function updateProgress(sectionPages, progressBar = todayProgress){
 			for(var i = 0; i < JSON.parse(sectionPages).value.length; i++){
 				if(Date.parse(JSON.parse(sectionPages).value[i].title) 
-					&& JSON.parse(sectionPages).value[i].title == "2016/12/07"){
+					&& Math.abs(new Date(JSON.parse(sectionPages).value[i].title.trim()) - (new Date())) <= 1000 * 60 * 60 * 24){
 					console.log("once");
 					onenoteRequest('pages/' + JSON.parse(sectionPages).value[i].id + '/content', function (content) {
 						var parser = new DOMParser();
@@ -100,7 +100,7 @@
 		request.onload = function (){
 			if(this.status == 200 || this.status == 0){
 				nextStep(this.responseText);
-			}else if(this.status = 401){
+			}else if(this.status == 401){
 				getNewAccess(path, nextStep);
 			}else{
 				console.log(this.status);
