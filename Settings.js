@@ -28,7 +28,6 @@
 		if(!JSON.parse(fs.readFileSync('notebooks.json')).today_progress.trim()){
 			dialog.showMessageBox(remote.getCurrentWindow(), {title: "Oops!", buttons:[], type: "warning", 
 							      message: "Please at least select one for today"});
-			e.returnValue = false;
 		}
 	};
 

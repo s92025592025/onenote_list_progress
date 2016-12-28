@@ -28,10 +28,11 @@ const menuTemplate = [
         loadingWin = null;
       });
 
+      settingWin.on('close', function (){
+        settingWin.getParentWindow().reload();
+      });
+
       settingWin.on('closed', function (){
-        if(!settingWin.isDestroyed()){
-          settingWin.getParentWindow().reload();
-        }
         settingWin = null;
       });
     }
@@ -96,6 +97,8 @@ ipcMain.on('show-menu-win', function(e, label){
   }
 });
 
+// pre: when need to clean all data and prompt uses to re-login
+// post: clean all the token and notebook data
 ipcMain.on('clear-all-data', function (e){
   fs.writeFileSync('token.json', "");
   var notebooks = JSON.parse(fs.readFileSync('notebooks.json'));
