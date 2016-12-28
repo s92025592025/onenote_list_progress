@@ -122,9 +122,7 @@
 			for(var i = 0; i < pages.value.length; i++){
 				var day = /\[.+\]/.exec(pages.value[i].title);
 				var period = /\[.+~.+\]/.exec(pages.value[i].title);
-				console.log(period);
 				if(day && !period && new Date(day[0].substring(1, day[0].length - 1))){
-					console.log('day');
 					if(Math.abs(new Date(day[0].substring(1, day[0].length - 1)) - new Date()) 
 					< 1000 * 60 * 60 * 24){
 						if(checkKey(bars, 'id', pages.value[i].id) < 0){
@@ -143,7 +141,6 @@
 						}
 					}
 				}else if(period){
-					console.log(checkInPeriod(period[0]));
 					if(checkInPeriod(period[0]) && checkKey(bars, 'id', pages.value[i].id) < 0){
 						bars.push({
 								id: pages.value[i].id,
@@ -187,14 +184,15 @@
 				}
 			}
 
-			for(var i = 0; i < bars.length; i++){
-				var bari = i;
-				onenoteRequest('pages/' + bars[i].id + '/content', function (content, index = bari, progressBar = bars){
+			bars.forEach(function (obj){
+				onenoteRequest('pages/' + obj.id + '/content', function (content, progressBar = obj.bar){
 					var parser = new DOMParser();
 					var dom = parser.parseFromString(content, 'text/html');
-					progressBar[index].bar.animate(dom.querySelectorAll('[data-tag="to-do:completed"]').length / dom.querySelectorAll('[data-tag]').length);
+					console.log(progressBar);
+					console.log(progressBar.value());
+					progressBar.animate(dom.querySelectorAll('[data-tag="to-do:completed"]').length / dom.querySelectorAll('[data-tag]').length);
 				});
-			}
+			});
 		}
 	}
 
