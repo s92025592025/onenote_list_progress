@@ -18,7 +18,7 @@
 			console.log('reloaded');
 		};
 
-		document.getElementById('logout-btn').onclick= logout;
+		document.getElementById('logout-btn').onclick = logout;
 
 		if(!JSON.parse(fs.readFileSync('notebooks.json')).today_progress){
 		      ipcRenderer.send('show-menu-win', 'Settings');
@@ -296,5 +296,21 @@
 
 	// pre: when the user clicked the logout button
 	// post: logs out the user, cleans out user data
-	function logout(){}
+	function logout(){
+		var request = new XMLHttpRequest();
+		request.open("GET", 'https://login.live.com/oauth20_logout.srf'
+							+ '?client_id='+ JSON.parse(fs.readFileSync('oauth2Info.json')).client_id
+							+ '&redirect_uri=' + JSON.parse(fs.readFileSync('oauth2Info.json')).redirect_uri
+							, false);
+		request.onload = function (){
+			if(this.status == 200 || this.status == 0){
+				ipcRenderer.send('clear-all-data');
+			}else{
+				console.log(this.status);
+				console.log(this.responseText);
+			}
+		}
+
+		request.send();
+	}
 })();
