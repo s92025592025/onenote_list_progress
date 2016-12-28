@@ -96,6 +96,18 @@ ipcMain.on('show-menu-win', function(e, label){
   }
 });
 
+ipcMain.on('clear-all-data', function (e){
+  fs.writeFileSync('token.json', "");
+  var notebooks = JSON.parse(fs.readFileSync('notebooks.json'));
+  notebooks.today_progress = "";
+  notebooks.misc_progress = "";
+  fs.writeFileSync('notebooks.json', JSON.stringify(notebooks));
+
+  win.loadURL('file:///firstTimeLogin.html');
+  win.setMenu(null);
+  win.setSize(800, 600);
+});
+
 // ======= This block contains all things relate to ipc ========= //
 
 
