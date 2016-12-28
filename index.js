@@ -188,6 +188,7 @@
 		// pre: when the list of tracking check lists are updated
 		// post: update the proress bar percetage
 		function updateBar(){
+			document.getElementById('misc_progress').style.height = (60 + bars.length * 60) + "px";
 			for(var i = 0; i < bars.length; i++){
 				if(bars[i].bar == "" && bars[i].div == ""){
 					bars[i].div = document.createElement('div');

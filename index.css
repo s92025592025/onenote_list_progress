@@ -30,12 +30,12 @@ li {
 
 .progress {
 	width: 100%;
-	height: 500px;
 }
 
 #today_progress {
 	margin-top: 40px;
 	width: 100%;
+	height: 500px;
 }
 
 #today_progressbar {
