@@ -210,8 +210,8 @@
 								'font-size': '18pt'
 							}
 						},
-						from: {color: '#D6AFFF'},
-						to: {color: "#7C00FF"},
+						from: {color: '#EBD9FF'},
+						to: {color: "#A550FF"},
 						step: function (state, bar){
 							bar.path.setAttribute('stroke', state.color);
 							bar.setText(Math.round(bar.value() * 1000) / 10 + "%")
