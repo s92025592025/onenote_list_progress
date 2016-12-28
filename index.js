@@ -32,8 +32,7 @@
 		      settingWin = null;
 		    });
 		}else{
-			//showToday();
-			showMisc();
+			showToday();
 		}
 	};
 
@@ -64,19 +63,42 @@
 		todayProgress.text.style.fontSize = '60pt';
 		todayProgress.animate(0.0);
 
+		var today = new Date();
+		today.setMonth(today.getMonth() - 3);
 		onenoteRequest('sections/' 
 						+ JSON.parse(fs.readFileSync('notebooks.json')).today_progress
 						+ "/pages"
 						+ '?filter=lastModifiedTime%20ge%20'
-						+ new Date().getFullYear() + '-' + (new Date().getMonth() + 11) % 12 + '-' + 29
+						+ today.getFullYear() + '-' 
+						+ ("0" + today.getMonth()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length) + '-' 
+						+ ("0" + today.getDate()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length)
 						, updateProgress);
 
 		var timer;
+		var misc = showMisc();
 
 		timer = setInterval(function (){
+			// updates for today
 			onenoteRequest('sections/' 
 						+ JSON.parse(fs.readFileSync('notebooks.json')).today_progress
-						+ "/pages", updateProgress);
+						+ "/pages"
+						+ '?filter=lastModifiedTime%20ge%20'
+						+ today.getFullYear() + '-' 
+						+ ("0" + today.getMonth()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length) + '-' 
+						+ ("0" + today.getDate()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length)
+						, updateProgress);
+			// updates for misc
+			for(var i = 0; i < JSON.parse(fs.readFileSync('notebooks.json')).misc_progress.length; i++){
+			onenoteRequest('sections/' 
+							+ JSON.parse(fs.readFileSync('notebooks.json')).misc_progress[i] 
+							+ '/pages?filter=lastModifiedTime%20ge%20'
+							+ today.getFullYear() + '-' 
+							+ ("0" + today.getMonth()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length) + '-' 
+							+ ("0" + today.getDate()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length)
+							, misc.updateTracks);
+			}
+
+			console.log("all updated");
 			}, JSON.parse(fs.readFileSync('notebooks.json').refresh_time * 60 * 1000));
 
 		function updateProgress(sectionPages, progressBar = todayProgress){
@@ -103,7 +125,6 @@
 	// 		have any date format in []
 	// post: show a list of progress in a linear progress bar
 	function showMisc(){
-		console.log('started');
 		var bars = [];
 
 		for(var i = 0; i < JSON.parse(fs.readFileSync('notebooks.json')).misc_progress.length; i++){
@@ -111,13 +132,14 @@
 			today.setMonth(today.getMonth() - 3);
 			onenoteRequest('sections/' 
 							+ JSON.parse(fs.readFileSync('notebooks.json')).misc_progress[i] 
-							+ '/pages'//?filter=lastModifiedTime%20ge%20'
-							//+ '2014-05-05T07:00:00Z'//+ today.getFullYear() + '-' + today.getMonth() + '-' + today.getDate() + "T07:00:00Z"
+							+ '/pages?filter=lastModifiedTime%20ge%20'
+							+ today.getFullYear() + '-' 
+							+ ("0" + today.getMonth()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length) + '-' 
+							+ ("0" + today.getDate()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length)
 							, updateTracks);
 		}
 
 		function updateTracks(pages){
-			console.log('updateTracks');
 			pages = JSON.parse(pages);
 			for(var i = 0; i < pages.value.length; i++){
 				var day = /\[.+\]/.exec(pages.value[i].title);
@@ -160,7 +182,6 @@
 		}
 
 		function updateBar(){
-			console.log('updateBar');
 			for(var i = 0; i < bars.length; i++){
 				if(bars[i].bar == "" && bars[i].div == ""){
 					bars[i].div = document.createElement('div');
@@ -188,12 +209,14 @@
 				onenoteRequest('pages/' + obj.id + '/content', function (content, progressBar = obj.bar){
 					var parser = new DOMParser();
 					var dom = parser.parseFromString(content, 'text/html');
-					console.log(progressBar);
-					console.log(progressBar.value());
 					progressBar.animate(dom.querySelectorAll('[data-tag="to-do:completed"]').length / dom.querySelectorAll('[data-tag]').length);
 				});
 			});
 		}
+
+		return {
+			updateTracks: updateTracks
+		};
 	}
 
 	// pre: should pass in array of object
