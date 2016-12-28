@@ -196,16 +196,25 @@
 					bars[i].div.class = 'bar';
 					document.getElementById('misc-progressbar').appendChild(bars[i].div);
 					bars[i].bar = new ProgressBar.Line('#bar' + i, {
-						strokeWidth: 6,
+						strokeWidth: 3,
 						easing: 'easeInOut',
 						duration: 1000,
 						color: '#878787',
 						trailWidth: 1,
-						trailColor: '#000000',
+						trailColor: '#999',
+						text:{
+							style:{
+								position: 'absolute',
+								right: '5px',
+								top: '0px',
+								'font-size': '18pt'
+							}
+						},
 						from: {color: '#D6AFFF'},
 						to: {color: "#7C00FF"},
 						step: function (state, bar){
 							bar.path.setAttribute('stroke', state.color);
+							bar.setText(Math.round(bar.value() * 1000) / 10 + "%")
 						}
 					});
 				}
