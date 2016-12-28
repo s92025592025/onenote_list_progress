@@ -93,7 +93,7 @@
 									+ ("0" + today.getDate()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length)
 									, misc.updateTracks);
 				}
-			}, JSON.parse(fs.readFileSync('notebooks.json').refresh_time * 60 * 1000));
+			}, JSON.parse(fs.readFileSync('notebooks.json').refresh_time) * 60 * 1000);
 
 		// pre: when the program is started or time to update. sectionPages should pass a json file that contains
 		//		pages data in the "today" section, progress should be only refer to the progress bar showing today's
@@ -116,6 +116,7 @@
 			if(flag){
 				// TO-DO
 				// do something different if there is nothing today
+				progressBar.animate(0);
 			}
 		}
 	}
