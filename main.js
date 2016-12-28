@@ -67,7 +67,7 @@ function startWindow(){
   }
 
   // open devtools
-  //win.webContents.openDevTools();
+  win.webContents.openDevTools();
 
   win.on('closed', function (){
     win = null;

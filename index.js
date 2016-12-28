@@ -32,7 +32,8 @@
 		      settingWin = null;
 		    });
 		}else{
-			showToday();
+			//showToday();
+			showMisc();
 		}
 	};
 
@@ -65,7 +66,10 @@
 
 		onenoteRequest('sections/' 
 						+ JSON.parse(fs.readFileSync('notebooks.json')).today_progress
-						+ "/pages", updateProgress);
+						+ "/pages"
+						+ '?filter=lastModifiedTime%20ge%20'
+						+ new Date().getFullYear() + '-' + (new Date().getMonth() + 11) % 12 + '-' + 29
+						, updateProgress);
 
 		var timer;
 
@@ -76,10 +80,11 @@
 			}, JSON.parse(fs.readFileSync('notebooks.json').refresh_time * 60 * 1000));
 
 		function updateProgress(sectionPages, progressBar = todayProgress){
+			var flag = true;
 			for(var i = 0; i < JSON.parse(sectionPages).value.length; i++){
 				if(Date.parse(JSON.parse(sectionPages).value[i].title) 
 					&& Math.abs(new Date(JSON.parse(sectionPages).value[i].title.trim()) - (new Date())) <= 1000 * 60 * 60 * 24){
-					console.log("once");
+					flag = false;
 					onenoteRequest('pages/' + JSON.parse(sectionPages).value[i].id + '/content', function (content) {
 						var parser = new DOMParser();
 						var dom = parser.parseFromString(content, 'text/html');
@@ -87,13 +92,132 @@
 					});
 				}
 			}
+
+			if(flag){
+				// do something different if there is nothing today
+			}
 		}
 	}
 
 	// pre: the sections the user specified to be tracked, title needs to
 	// 		have any date format in []
 	// post: show a list of progress in a linear progress bar
-	function showMisc(){}
+	function showMisc(){
+		console.log('started');
+		var bars = [];
+
+		for(var i = 0; i < JSON.parse(fs.readFileSync('notebooks.json')).misc_progress.length; i++){
+			console.log('update notebooks');
+			var today  = new Date();
+			today.setMonth(today.getMonth() - 3);
+			onenoteRequest('sections/' 
+							+ JSON.parse(fs.readFileSync('notebooks.json')).misc_progress[i] 
+							+ '/pages'//?filter=lastModifiedTime%20ge%20'
+							//+ '2014-05-05T07:00:00Z'//+ today.getFullYear() + '-' + today.getMonth() + '-' + today.getDate() + "T07:00:00Z"
+							, updateTracks);
+		}
+
+		function updateTracks(pages){
+			console.log('updateTracks');
+			pages = JSON.parse(pages);
+			for(var i = 0; i < pages.value.length; i++){
+				var day = /\[.+\]/.exec(pages.value[i].title);
+				var period = /\[.+~.+\]/.exec(pages.value[i].title);
+				if(day && new Date(day[0].substring(1, day[0].length - 1))){
+					if(Math.abs(new Date(day[0].substring(1, day[0].length - 1)) - new Date()) 
+					< 1000 * 60 * 60 * 24){
+						if(checkKey(bars, 'id', pages.value[i].id) < 0){
+							bars.push({
+								id: pages.value[i].id,
+								title: pages.value[i].title,
+								bar: "",
+								div: ""
+							});
+						}
+					}else{
+						if(checkKey(bars, 'id', pages.value[i].id) >= 0){
+							bars[checkKey(bars, 'id', pages.value[i].id)].div.parentNode
+							.removeChild(bars[checkKey(bars, 'id', pages.value[i].id)].div);
+							bars.splice(checkKey(bars, 'id', pages.value[i].id), 1);
+						}
+					}
+				}else if(period){
+					if(checkInPeriod(period[0]) && bars.checkKey(bars, 'id', pages.value[i].id) < 0){
+						bars.push({
+								id: pages.value[i].id,
+								title: pages.value[i].title,
+								bar: "",
+								div: ""
+							});
+					}else if(!checkInPeriod(period[0]) && checkKey(bars, 'id', pages.value[i].id) >= 0){
+						bars[checkKey(bars, 'id', pages.value[i].id)].div.parentNode
+							.removeChild(bars[checkKey(bars, 'id', pages.value[i].id)].div);
+							bars.splice(checkKey(bars, 'id', pages.value[i].id), 1);
+					}
+				}
+			}
+
+			updateBar();
+		}
+
+		function updateBar(){
+			console.log('updateBar');
+			for(var i = 0; i < bars.length; i++){
+				if(bars[i].bar == "" && bars[i].div == ""){
+					bars[i].div = document.createElement('div');
+					bars[i].div.innerHTML = '<h4>' + bars[i].title + '</h4>'
+					bars[i].div.id = 'bar' + i;
+					bars[i].div.class = 'bar';
+					document.getElementById('misc-progressbar').appendChild(bars[i].div);
+					bars[i].bar = new ProgressBar.Line('#bar' + i, {
+						strokeWidth: 6,
+						easing: 'easeInOut',
+						duration: 1000,
+						color: '#878787',
+						trailWidth: 1,
+						from: {color: '#D6AFFF'},
+						to: {color: "#7C00FF"},
+						step: function (state, bar){
+							bar.path.setAttribute('stroke', state.color);
+						}
+					});
+				}
+			}
+
+			for(var i = 0; i < bars.length; i++){
+				console.log(i);
+				var bari = i;
+				onenoteRequest('pages/' + bars[i].id + '/content', function (content, index = bari, progressBar = bars){
+					var parser = new DOMParser();
+					var dom = parser.parseFromString(content, 'text/html');
+					console.log(index);
+					progressBar[index].bar.animate(dom.querySelectorAll('[data-tag="to-do:completed"]').length / dom.querySelectorAll('[data-tag]').length);
+				});
+			}
+		}
+	}
+
+	// pre: should pass in array of object
+	// post: find if the array has a object has a value in a specific key
+	function checkKey (array, key, value){
+		for(var i = 0; i < array.length; i++){
+			if(array[i][key] == value){
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
+	// pre: pass in an interval of time in the format of [start~end]
+	// post: return true if today is within the range, false when not
+	function checkInPeriod(period){
+		var start = /\[.+~/.exec(period)[0];
+		var end = /~.+\]/.exec(period)[0];
+
+		return new Date() - new Date(start.substring(1, start.length - 1)) > 0 
+				&& new Date(end.substring(1, end.length - 1) + " 23:59:59") - new Date() > 0;
+	}
 
 	// pre: path should only vaild request path specifed in onenote api,
 	//		should also pass in a funciton as nextStep that will be executed
