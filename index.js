@@ -107,7 +107,6 @@
 		var bars = [];
 
 		for(var i = 0; i < JSON.parse(fs.readFileSync('notebooks.json')).misc_progress.length; i++){
-			console.log('update notebooks');
 			var today  = new Date();
 			today.setMonth(today.getMonth() - 3);
 			onenoteRequest('sections/' 
@@ -123,7 +122,9 @@
 			for(var i = 0; i < pages.value.length; i++){
 				var day = /\[.+\]/.exec(pages.value[i].title);
 				var period = /\[.+~.+\]/.exec(pages.value[i].title);
-				if(day && new Date(day[0].substring(1, day[0].length - 1))){
+				console.log(period);
+				if(day && !period && new Date(day[0].substring(1, day[0].length - 1))){
+					console.log('day');
 					if(Math.abs(new Date(day[0].substring(1, day[0].length - 1)) - new Date()) 
 					< 1000 * 60 * 60 * 24){
 						if(checkKey(bars, 'id', pages.value[i].id) < 0){
@@ -142,7 +143,8 @@
 						}
 					}
 				}else if(period){
-					if(checkInPeriod(period[0]) && bars.checkKey(bars, 'id', pages.value[i].id) < 0){
+					console.log(checkInPeriod(period[0]));
+					if(checkInPeriod(period[0]) && checkKey(bars, 'id', pages.value[i].id) < 0){
 						bars.push({
 								id: pages.value[i].id,
 								title: pages.value[i].title,
@@ -175,6 +177,7 @@
 						duration: 1000,
 						color: '#878787',
 						trailWidth: 1,
+						trailColor: '#000000',
 						from: {color: '#D6AFFF'},
 						to: {color: "#7C00FF"},
 						step: function (state, bar){
@@ -185,12 +188,10 @@
 			}
 
 			for(var i = 0; i < bars.length; i++){
-				console.log(i);
 				var bari = i;
 				onenoteRequest('pages/' + bars[i].id + '/content', function (content, index = bari, progressBar = bars){
 					var parser = new DOMParser();
 					var dom = parser.parseFromString(content, 'text/html');
-					console.log(index);
 					progressBar[index].bar.animate(dom.querySelectorAll('[data-tag="to-do:completed"]').length / dom.querySelectorAll('[data-tag]').length);
 				});
 			}
