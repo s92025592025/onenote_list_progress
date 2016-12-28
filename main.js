@@ -1,55 +1,139 @@
-const {app, BrowserWindow} = require('electron')
-const path = require('path')
-const url = require('url')
+// import app and BrowserWindow from 'electron' package
+const {app, BrowserWindow, ipcMain, Menu} = require('electron');
+// import path
+const path = require('path');
+// import file-system
+const fs = require("file-system");
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-let win
+// keep a global reference of BrowserWindow Object in case of
+// getting cleaned by garbage collection
+let win;
 
-function createWindow () {
-  // Create the browser window.
-  win = new BrowserWindow({width: 800, height: 600})
+const menuTemplate = [
+  {
+    label: 'Settings',
+    click() {
+      var settingWin = new BrowserWindow({parent: win, width: 600, height: 800, maximizable: false,
+                                          minimizable: false, darkTheme: true, show: false});
+      var loadingWin = new BrowserWindow({width: 300, height:100, maximizable: false,
+                                          minimizable: false, frame: false, alwaysOnTop: true});
+      loadingWin.loadURL('file:///loading.html');
+      settingWin.setMenu(null);
+      settingWin.loadURL("file:///Settings.html");
+      settingWin.webContents.openDevTools();
 
-  // and load the index.html of the app.
-  win.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
-    protocol: 'file:',
-    slashes: true
-  }))
+      settingWin.on('ready-to-show', function (){
+        loadingWin.close();
+        settingWin.show();
+        loadingWin = null;
+      });
 
-  // Open the DevTools.
-  win.webContents.openDevTools()
+      settingWin.on('close', function (){
+        settingWin.getParentWindow().reload();
+      });
 
-  // Emitted when the window is closed.
-  win.on('closed', () => {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    win = null
-  })
+      settingWin.on('closed', function (){
+        settingWin = null;
+      });
+    }
+  },
+  {
+    label: 'About',
+    submenu: [
+      {
+        label: 'About this project',
+        click() { 
+          require('electron').shell.openExternal('https://github.com/s92025592025/onenote_list_progress');
+        }
+      }
+    ]
+  }
+  ];
+
+// pre: When the appliction is started
+// post: Will Choose to open different window according to
+//       whether the user has logged in his/her onenote account
+//       before
+function startWindow(){
+  if(!fs.readFileSync("token.json").length){ // if never logged in
+    win = new BrowserWindow({width: 800, height: 300});
+    win.setMenu(null);
+    win.loadURL("file:///firstTimeLogin.html");
+  }else{
+    win = new BrowserWindow({width: 600, height: 800});
+    win.setMenu(null);
+    win.setMenu(Menu.buildFromTemplate(menuTemplate));
+    win.loadURL("file:///index.html");
+  }
+
+  // open devtools
+  win.webContents.openDevTools();
+
+  win.on('closed', function (){
+    win = null;
+  });
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+// ======= This block contains all things relate to ipc ========= //
 
-// Quit when all windows are closed.
-app.on('window-all-closed', () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
+// pre: when the main windows need to be changed
+// post: change the main window to the page and the size renderer process
+//       desire
+ipcMain.on('redirect-main-win', function(e, url, width, height){
+  win.setMenu(Menu.buildFromTemplate(menuTemplate));
+  win.loadURL(url);
+  win.setSize(width, height);
+  e.returnValue = "done";
+});
+
+
+// pre: when want to open a window that belongs to manu item from rendering process
+// pre: find the label that matches the passed in label and execute it
+ipcMain.on('show-menu-win', function(e, label){
+  for(var i = 0; i < menuTemplate.length; i++){
+    if(menuTemplate[i].label == label){
+      menuTemplate[i].click();
+    }
   }
-})
+});
 
-app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (win === null) {
-    createWindow()
+// pre: when need to clean all data and prompt uses to re-login
+// post: clean all the token and notebook data
+ipcMain.on('clear-all-data', function (e){
+  fs.writeFileSync('token.json', "");
+  var notebooks = JSON.parse(fs.readFileSync('notebooks.json'));
+  notebooks.today_progress = "";
+  notebooks.misc_progress = "";
+  fs.writeFileSync('notebooks.json', JSON.stringify(notebooks));
+
+  win.loadURL('file:///firstTimeLogin.html');
+  win.setMenu(null);
+  win.setSize(800, 600);
+});
+
+// ======= This block contains all things relate to ipc ========= //
+
+
+// ======= This block contains all things relate to app ========= //
+
+// show the first window when the electorn app is ready
+app.on('ready', startWindow);
+
+app.on('window-all-closed', function (){
+  // process.platform: from Node.js, will return the platform the
+  //                    program is currently running
+  if(process.platform !== 'darwin'){ // if the platform is not mac
+    // kill the app upon the windows are all closed
+    app.quit();
+  } // or do nothing(typical macOS behavior)
+});
+
+app.on('active', function (){
+  // this is for mac, if it is activcatived from thew dock, 
+  // show the starting screen again
+  if(win === null){
+    startWindow();
   }
-})
+});
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+// ======= This block contains all things relate to app ========= //
