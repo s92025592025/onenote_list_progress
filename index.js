@@ -12,7 +12,7 @@
 
 	window.onload = function (){
 		if(!JSON.parse(fs.readFileSync('notebooks.json')).today_progress){
-			// show settings page
+			// show settings page if the user haven't selected tracked notebooks
 			var settingWin = new BrowserWindow({width: 600, height: 800, maximizable: false,
         	                                    minimizable: false, darkTheme: true, show: false});
 		    var loadingWin = new BrowserWindow({width: 300, height:100, maximizable: false,
@@ -32,14 +32,17 @@
 		      settingWin = null;
 		    });
 		}else{
+			// this actuallt shows everything
 			showToday();
 		}
 	};
 
 	// pre: when user do have a section to store the checklist for today,
 	//		the page title should contain only data in any format
-	// post: create a new task bar
+	// post: shows the progress bar of today and misc when start up, and updates both
+	//		 in a certain time period
 	function showToday(){
+		// progress bar for today
 		var todayProgress = new ProgressBar.Circle('#today_progressbar', {
 			color: '#aaa',
 			trailColor: '#9D9E9E',
@@ -75,32 +78,36 @@
 						, updateProgress);
 
 		var timer;
+		// show progress bars for today
 		var misc = showMisc();
 
+		// update both progressbars in a certain time interval
 		timer = setInterval(function (){
-			// updates for today
-			onenoteRequest('sections/' 
-						+ JSON.parse(fs.readFileSync('notebooks.json')).today_progress
-						+ "/pages"
-						+ '?filter=lastModifiedTime%20ge%20'
-						+ today.getFullYear() + '-' 
-						+ ("0" + today.getMonth()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length) + '-' 
-						+ ("0" + today.getDate()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length)
-						, updateProgress);
-			// updates for misc
-			for(var i = 0; i < JSON.parse(fs.readFileSync('notebooks.json')).misc_progress.length; i++){
-			onenoteRequest('sections/' 
-							+ JSON.parse(fs.readFileSync('notebooks.json')).misc_progress[i] 
-							+ '/pages?filter=lastModifiedTime%20ge%20'
+				// update today's progress bar
+				onenoteRequest('sections/' 
+							+ JSON.parse(fs.readFileSync('notebooks.json')).today_progress
+							+ "/pages"
+							+ '?filter=lastModifiedTime%20ge%20'
 							+ today.getFullYear() + '-' 
 							+ ("0" + today.getMonth()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length) + '-' 
 							+ ("0" + today.getDate()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length)
-							, misc.updateTracks);
-			}
-
-			console.log("all updated");
+							, updateProgress);
+				// update misc's progress bar
+				for(var i = 0; i < JSON.parse(fs.readFileSync('notebooks.json')).misc_progress.length; i++){
+					onenoteRequest('sections/' 
+									+ JSON.parse(fs.readFileSync('notebooks.json')).misc_progress[i] 
+									+ '/pages?filter=lastModifiedTime%20ge%20'
+									+ today.getFullYear() + '-' 
+									+ ("0" + today.getMonth()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length) + '-' 
+									+ ("0" + today.getDate()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length)
+									, misc.updateTracks);
+				}
 			}, JSON.parse(fs.readFileSync('notebooks.json').refresh_time * 60 * 1000));
 
+		// pre: when the program is started or time to update. sectionPages should pass a json file that contains
+		//		pages data in the "today" section, progress should be only refer to the progress bar showing today's
+		//		progress by default
+		// post: finds if there is any check list for today and update the percentage on the progress bar
 		function updateProgress(sectionPages, progressBar = todayProgress){
 			var flag = true;
 			for(var i = 0; i < JSON.parse(sectionPages).value.length; i++){
@@ -116,6 +123,7 @@
 			}
 
 			if(flag){
+				// TO-DO
 				// do something different if there is nothing today
 			}
 		}
@@ -127,6 +135,8 @@
 	function showMisc(){
 		var bars = [];
 
+		// scan through the sections that specified to be tracked in settings, and pass down to updateTracks
+		// to keep the latest version of pages to be show as progress bar
 		for(var i = 0; i < JSON.parse(fs.readFileSync('notebooks.json')).misc_progress.length; i++){
 			var today  = new Date();
 			today.setMonth(today.getMonth() - 3);
@@ -139,11 +149,14 @@
 							, updateTracks);
 		}
 
+		// pre: pages should pass in a list of pages lastmodified within 3 months in a section in terms of a JSON
+		// post: update an array of objects of misc check lists that should be tracked, then pass down to update bar
 		function updateTracks(pages){
 			pages = JSON.parse(pages);
 			for(var i = 0; i < pages.value.length; i++){
 				var day = /\[.+\]/.exec(pages.value[i].title);
 				var period = /\[.+~.+\]/.exec(pages.value[i].title);
+				// breaks down to "a day", or "a tie period"
 				if(day && !period && new Date(day[0].substring(1, day[0].length - 1))){
 					if(Math.abs(new Date(day[0].substring(1, day[0].length - 1)) - new Date()) 
 					< 1000 * 60 * 60 * 24){
@@ -181,6 +194,8 @@
 			updateBar();
 		}
 
+		// pre: when the list of tracking check lists are updated
+		// post: update the proress bar percetage
 		function updateBar(){
 			for(var i = 0; i < bars.length; i++){
 				if(bars[i].bar == "" && bars[i].div == ""){
