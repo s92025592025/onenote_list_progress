@@ -17,6 +17,8 @@
 			console.log('reloaded');
 		};
 
+		document.getElementById('logout-btn').onclick= logout;
+
 		if(!JSON.parse(fs.readFileSync('notebooks.json')).today_progress){
 			// show settings page if the user haven't selected tracked notebooks
 			var settingWin = new BrowserWindow({width: 600, height: 800, maximizable: false,
@@ -308,4 +310,8 @@
 					+ "&redirect_uri=" + JSON.parse(fs.readFileSync("oauth2Info.json")).redirect_uri
 					+ "&refresh_token=" + JSON.parse(fs.readFileSync("token.json")).refresh_token);
 	}
+
+	// pre: when the user clicked the logout button
+	// post: logs out the user, cleans out user data
+	function logout(){}
 })();
