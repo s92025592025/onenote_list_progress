@@ -6,11 +6,17 @@
 	'use strict';
 
 	const {BrowserWindow} = require('electron').remote;
+	const remote = require('electron').remote;
 	const fs = require('file-system');
 	const ProgressBar = require('progressbar.js');
 	const ONENOTE_ROOT = 'https://www.onenote.com/api/v1.0/me/notes/';
 
 	window.onload = function (){
+		document.getElementById('refresh-btn').onclick = function() {
+			remote.getCurrentWindow().reload();
+			console.log('reloaded');
+		};
+
 		if(!JSON.parse(fs.readFileSync('notebooks.json')).today_progress){
 			// show settings page if the user haven't selected tracked notebooks
 			var settingWin = new BrowserWindow({width: 600, height: 800, maximizable: false,
@@ -32,7 +38,7 @@
 		      settingWin = null;
 		    });
 		}else{
-			// this actuallt shows everything
+			// this actually shows everything
 			showToday();
 		}
 	};
