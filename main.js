@@ -28,11 +28,10 @@ const menuTemplate = [
         loadingWin = null;
       });
 
-      settingWin.on('close', function (){
-        settingWin.getParentWindow().reload();
-      });
-
       settingWin.on('closed', function (){
+        if(!settingWin.isDestroyed()){
+          settingWin.getParentWindow().reload();
+        }
         settingWin = null;
       });
     }
@@ -80,11 +79,21 @@ function startWindow(){
 // post: change the main window to the page and the size renderer process
 //       desire
 ipcMain.on('redirect-main-win', function(e, url, width, height){
+  win.setMenu(Menu.buildFromTemplate(menuTemplate));
   win.loadURL(url);
   win.setSize(width, height);
-  win.setMenu(null);
-  win.setMenu(Menu.buildFromTemplate(menuTemplate));
   e.returnValue = "done";
+});
+
+
+// pre: when want to open a window that belongs to manu item from rendering process
+// pre: find the label that matches the passed in label and execute it
+ipcMain.on('show-menu-win', function(e, label){
+  for(var i = 0; i < menuTemplate.length; i++){
+    if(menuTemplate[i].label == label){
+      menuTemplate[i].click();
+    }
+  }
 });
 
 // ======= This block contains all things relate to ipc ========= //

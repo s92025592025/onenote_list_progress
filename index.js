@@ -5,7 +5,8 @@
 (function (){
 	'use strict';
 
-	const {BrowserWindow} = require('electron').remote;
+	const {BrowserWindow, Menu} = require('electron').remote;
+	const {ipcRenderer} = require('electron');
 	const remote = require('electron').remote;
 	const fs = require('file-system');
 	const ProgressBar = require('progressbar.js');
@@ -20,25 +21,7 @@
 		document.getElementById('logout-btn').onclick= logout;
 
 		if(!JSON.parse(fs.readFileSync('notebooks.json')).today_progress){
-			// show settings page if the user haven't selected tracked notebooks
-			var settingWin = new BrowserWindow({width: 600, height: 800, maximizable: false,
-        	                                    minimizable: false, darkTheme: true, show: false});
-		    var loadingWin = new BrowserWindow({width: 300, height:100, maximizable: false,
-		                                        minimizable: false, frame: false, alwaysOnTop: true});
-		    loadingWin.loadURL('file:///loading.html');
-		    settingWin.setMenu(null);
-		    settingWin.loadURL("file:///Settings.html");
-		    settingWin.webContents.openDevTools();
-
-		    settingWin.on('ready-to-show', function (){
-		      loadingWin.close();
-		      settingWin.show();
-		      loadingWin = null;
-		    });
-
-		    settingWin.on('closed', function (){
-		      settingWin = null;
-		    });
+		      ipcRenderer.send('show-menu-win', 'Settings');
 		}else{
 			// this actually shows everything
 			showToday();
