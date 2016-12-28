@@ -3,8 +3,6 @@
 */
 
 (function (){
-	'use strict';
-
 	const {BrowserWindow, Menu} = require('electron').remote;
 	const {ipcRenderer} = require('electron');
 	const remote = require('electron').remote;
@@ -13,6 +11,7 @@
 	const ONENOTE_ROOT = 'https://www.onenote.com/api/v1.0/me/notes/';
 
 	window.onload = function (){
+		console.log(JSON.parse(fs.readFileSync('notebooks.json')).refresh_time * 60 * 1000);
 		document.getElementById('refresh-btn').onclick = function() {
 			remote.getCurrentWindow().reload();
 			console.log('reloaded');
@@ -93,7 +92,7 @@
 									+ ("0" + today.getDate()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length)
 									, misc.updateTracks);
 				}
-			}, JSON.parse(fs.readFileSync('notebooks.json').refresh_time) * 60 * 1000);
+			}, JSON.parse(fs.readFileSync('notebooks.json')).refresh_time * 60 * 1000);
 
 		// pre: when the program is started or time to update. sectionPages should pass a json file that contains
 		//		pages data in the "today" section, progress should be only refer to the progress bar showing today's
@@ -226,7 +225,9 @@
 				onenoteRequest('pages/' + obj.id + '/content', function (content, progressBar = obj.bar){
 					var parser = new DOMParser();
 					var dom = parser.parseFromString(content, 'text/html');
-					progressBar.animate(dom.querySelectorAll('[data-tag="to-do:completed"]').length / dom.querySelectorAll('[data-tag]').length);
+					if(dom){
+						progressBar.animate(dom.querySelectorAll('[data-tag="to-do:completed"]').length / dom.querySelectorAll('[data-tag]').length);
+					}
 				});
 			});
 		}
