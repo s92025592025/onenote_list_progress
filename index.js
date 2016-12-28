@@ -3,8 +3,6 @@
 */
 
 (function (){
-	'use strict';
-
 	const {BrowserWindow, Menu} = require('electron').remote;
 	const {ipcRenderer} = require('electron');
 	const remote = require('electron').remote;
@@ -13,6 +11,7 @@
 	const ONENOTE_ROOT = 'https://www.onenote.com/api/v1.0/me/notes/';
 
 	window.onload = function (){
+		console.log(JSON.parse(fs.readFileSync('notebooks.json')).refresh_time * 60 * 1000);
 		document.getElementById('refresh-btn').onclick = function() {
 			remote.getCurrentWindow().reload();
 			console.log('reloaded');
@@ -93,7 +92,7 @@
 									+ ("0" + today.getDate()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length)
 									, misc.updateTracks);
 				}
-			}, JSON.parse(fs.readFileSync('notebooks.json').refresh_time * 60 * 1000));
+			}, JSON.parse(fs.readFileSync('notebooks.json')).refresh_time * 60 * 1000);
 
 		// pre: when the program is started or time to update. sectionPages should pass a json file that contains
 		//		pages data in the "today" section, progress should be only refer to the progress bar showing today's
@@ -116,6 +115,7 @@
 			if(flag){
 				// TO-DO
 				// do something different if there is nothing today
+				progressBar.animate(0);
 			}
 		}
 	}
@@ -188,6 +188,7 @@
 		// pre: when the list of tracking check lists are updated
 		// post: update the proress bar percetage
 		function updateBar(){
+			document.getElementById('misc_progress').style.height = (60 + bars.length * 60) + "px";
 			for(var i = 0; i < bars.length; i++){
 				if(bars[i].bar == "" && bars[i].div == ""){
 					bars[i].div = document.createElement('div');
@@ -196,16 +197,25 @@
 					bars[i].div.class = 'bar';
 					document.getElementById('misc-progressbar').appendChild(bars[i].div);
 					bars[i].bar = new ProgressBar.Line('#bar' + i, {
-						strokeWidth: 6,
+						strokeWidth: 3,
 						easing: 'easeInOut',
 						duration: 1000,
 						color: '#878787',
 						trailWidth: 1,
-						trailColor: '#000000',
-						from: {color: '#D6AFFF'},
-						to: {color: "#7C00FF"},
+						trailColor: '#999',
+						text:{
+							style:{
+								position: 'absolute',
+								right: '5px',
+								top: '0px',
+								'font-size': '18pt'
+							}
+						},
+						from: {color: '#EBD9FF'},
+						to: {color: "#A550FF"},
 						step: function (state, bar){
 							bar.path.setAttribute('stroke', state.color);
+							bar.setText(Math.round(bar.value() * 1000) / 10 + "%")
 						}
 					});
 				}
@@ -215,7 +225,9 @@
 				onenoteRequest('pages/' + obj.id + '/content', function (content, progressBar = obj.bar){
 					var parser = new DOMParser();
 					var dom = parser.parseFromString(content, 'text/html');
-					progressBar.animate(dom.querySelectorAll('[data-tag="to-do:completed"]').length / dom.querySelectorAll('[data-tag]').length);
+					if(dom){
+						progressBar.animate(dom.querySelectorAll('[data-tag="to-do:completed"]').length / dom.querySelectorAll('[data-tag]').length);
+					}
 				});
 			});
 		}
