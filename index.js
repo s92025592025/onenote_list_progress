@@ -11,10 +11,8 @@
 	const ONENOTE_ROOT = 'https://www.onenote.com/api/v1.0/me/notes/';
 
 	window.onload = function (){
-		console.log(JSON.parse(fs.readFileSync('notebooks.json')).refresh_time * 60 * 1000);
 		document.getElementById('refresh-btn').onclick = function() {
 			remote.getCurrentWindow().reload();
-			console.log('reloaded');
 		};
 
 		document.getElementById('logout-btn').onclick = logout;
@@ -107,7 +105,8 @@
 					onenoteRequest('pages/' + JSON.parse(sectionPages).value[i].id + '/content', function (content) {
 						var parser = new DOMParser();
 						var dom = parser.parseFromString(content, 'text/html');
-						progressBar.animate(dom.querySelectorAll('[data-tag="to-do:completed"]').length / dom.querySelectorAll('[data-tag]').length);
+						progressBar.animate(dom.querySelectorAll('[data-tag="to-do:completed"]').length 
+											/ (dom.querySelectorAll('[data-tag="to-do:completed"]').length + dom.querySelectorAll('[data-tag="to-do"]').length));
 					});
 				}
 			}
@@ -148,37 +147,30 @@
 				var day = /\[.+\]/.exec(pages.value[i].title);
 				var period = /\[.+~.+\]/.exec(pages.value[i].title);
 				// breaks down to "a day", or "a tie period"
-				if(day && !period && new Date(day[0].substring(1, day[0].length - 1))){
-					if(Math.abs(new Date(day[0].substring(1, day[0].length - 1)) - new Date()) 
-					< 1000 * 60 * 60 * 24){
-						if(checkKey(bars, 'id', pages.value[i].id) < 0){
-							bars.push({
-								id: pages.value[i].id,
-								title: pages.value[i].title,
-								bar: "",
-								div: ""
-							});
-						}
-					}else{
-						if(checkKey(bars, 'id', pages.value[i].id) >= 0){
-							bars[checkKey(bars, 'id', pages.value[i].id)].div.parentNode
-							.removeChild(bars[checkKey(bars, 'id', pages.value[i].id)].div);
-							bars.splice(checkKey(bars, 'id', pages.value[i].id), 1);
-						}
-					}
-				}else if(period){
-					if(checkInPeriod(period[0]) && checkKey(bars, 'id', pages.value[i].id) < 0){
-						bars.push({
-								id: pages.value[i].id,
-								title: pages.value[i].title,
-								bar: "",
-								div: ""
-							});
-					}else if(!checkInPeriod(period[0]) && checkKey(bars, 'id', pages.value[i].id) >= 0){
+				if(day && !period && new Date(day[0].substring(1, day[0].length - 1))
+					&& Math.abs(new Date(day[0].substring(1, day[0].length - 1)) - new Date()) 
+						< 1000 * 60 * 60 * 24
+					&& checkKey(bars, 'id', pages.value[i].id) < 0){
+					bars.push({
+						id: pages.value[i].id,
+						title: pages.value[i].title,
+						bar: "",
+						div: ""
+					});
+				}else if(period && checkInPeriod(period[0]) 
+						&& checkKey(bars, 'id', pages.value[i].id) < 0){
+					bars.push({
+							id: pages.value[i].id,
+							title: pages.value[i].title,
+							bar: "",
+							div: ""
+						});
+				}else if(checkKey(bars, 'id', pages.value[i].id) >= 0){
+					if(bars[checkKey(bars, 'id', pages.value[i].id)].div){
 						bars[checkKey(bars, 'id', pages.value[i].id)].div.parentNode
 							.removeChild(bars[checkKey(bars, 'id', pages.value[i].id)].div);
-							bars.splice(checkKey(bars, 'id', pages.value[i].id), 1);
 					}
+					bars.splice(checkKey(bars, 'id', pages.value[i].id), 1);
 				}
 			}
 
@@ -215,7 +207,7 @@
 						to: {color: "#A550FF"},
 						step: function (state, bar){
 							bar.path.setAttribute('stroke', state.color);
-							bar.setText(Math.round(bar.value() * 1000) / 10 + "%")
+							bar.setText(Math.round(bar.value() * 1000) / 10 + "%");
 						}
 					});
 				}
@@ -223,13 +215,15 @@
 
 			bars.forEach(function (obj){
 				onenoteRequest('pages/' + obj.id + '/content', function (content, progressBar = obj.bar){
+					console.log(content);
 					var parser = new DOMParser();
 					var dom = parser.parseFromString(content, 'text/html');
-					if(dom){
-						progressBar.animate(dom.querySelectorAll('[data-tag="to-do:completed"]').length / dom.querySelectorAll('[data-tag]').length);
-					}
+					progressBar.animate(dom.querySelectorAll('[data-tag="to-do:completed"]').length 
+								/ (dom.querySelectorAll('[data-tag="to-do:completed"]').length + dom.querySelectorAll('[data-tag="to-do"]').length));
 				});
 			});
+
+			console.log(bars);
 		}
 
 		return {
