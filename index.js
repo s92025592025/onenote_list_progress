@@ -215,15 +215,12 @@
 
 			bars.forEach(function (obj){
 				onenoteRequest('pages/' + obj.id + '/content', function (content, progressBar = obj.bar){
-					console.log(content);
 					var parser = new DOMParser();
 					var dom = parser.parseFromString(content, 'text/html');
 					progressBar.animate(dom.querySelectorAll('[data-tag="to-do:completed"]').length 
 								/ (dom.querySelectorAll('[data-tag="to-do:completed"]').length + dom.querySelectorAll('[data-tag="to-do"]').length));
 				});
 			});
-
-			console.log(bars);
 		}
 
 		return {
