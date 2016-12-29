@@ -20,7 +20,7 @@ const menuTemplate = [
       loadingWin.loadURL('file:///loading.html');
       settingWin.setMenu(null);
       settingWin.loadURL("file:///Settings.html");
-      settingWin.webContents.openDevTools();
+      //settingWin.webContents.openDevTools();
 
       settingWin.on('ready-to-show', function (){
         loadingWin.close();
@@ -60,14 +60,14 @@ function startWindow(){
     win.setMenu(null);
     win.loadURL("file:///firstTimeLogin.html");
   }else{
-    win = new BrowserWindow({width: 600, height: 800});
+    win = new BrowserWindow({width: 600, height: 800, resizable: false});
     win.setMenu(null);
     win.setMenu(Menu.buildFromTemplate(menuTemplate));
     win.loadURL("file:///index.html");
   }
 
   // open devtools
-  win.webContents.openDevTools();
+  //win.webContents.openDevTools();
 
   win.on('closed', function (){
     win = null;
@@ -83,6 +83,7 @@ ipcMain.on('redirect-main-win', function(e, url, width, height){
   win.setMenu(Menu.buildFromTemplate(menuTemplate));
   win.loadURL(url);
   win.setSize(width, height);
+  win.setResizable(false);
   e.returnValue = "done";
 });
 
@@ -108,7 +109,8 @@ ipcMain.on('clear-all-data', function (e){
 
   win.loadURL('file:///firstTimeLogin.html');
   win.setMenu(null);
-  win.setSize(800, 600);
+  win.setSize(800, 300);
+  win.setResizable(true);
 });
 
 // ======= This block contains all things relate to ipc ========= //
