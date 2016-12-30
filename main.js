@@ -20,7 +20,7 @@ const menuTemplate = [
       loadingWin.loadURL('file://' + __dirname + '/loading.html');
       settingWin.setMenu(null);
       settingWin.loadURL("file://" + __dirname +"/Settings.html");
-      //settingWin.webContents.openDevTools();
+      settingWin.webContents.openDevTools();
 
       settingWin.on('ready-to-show', function (){
         loadingWin.close();
@@ -67,7 +67,7 @@ function startWindow(){
   }
 
   // open devtools
-  //win.webContents.openDevTools();
+  win.webContents.openDevTools();
 
   win.on('closed', function (){
     win = null;
