@@ -5,7 +5,7 @@ This little software will track you onenote list finishing progress.
 These are the things you will need to do in order to make this software work.
 
 ### How to install
-This software does not require to install. Simply download the .rar, extract it, and it is ready to do.
+This software does not require to install. Simply download the .rar, extract it, and it is ready to go.
 The download page in [here](https://github.com/s92025592025/onenote_list_progress/releases/tag/v1.0).
 
 ### How to use it
