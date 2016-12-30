@@ -166,10 +166,8 @@
 		var json = '';
 		var request = new XMLHttpRequest();
 		request.open("GET", ONENOTE_ROOT + path, false);
-		console.log('tag1');
 		request.setRequestHeader("Authorization", 
 				"Bearer " + JSON.parse(originalFs.readFileSync(__dirname + "/../token.json")).access_token);
-		console.log('tag2');
 		request.onload = function (){
 			if(this.status == 200 || this.status == 0){
 				json = JSON.parse(this.responseText);
