@@ -3,6 +3,6 @@
   "version": "0.0.1",
   "main": "main.js",
   "dependencies": {
-    "file-system": "^2.2.2"
+    "file-system": "^2.2.2",
   }
 }

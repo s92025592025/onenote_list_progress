@@ -3,6 +3,7 @@
 
 	const {dialog} = require('electron').remote;
 	const fs = require('file-system');
+	const originalFs = require('original-fs');
 	const remote = require('electron').remote;
 	const ONENOTE_ROOT = 'https://www.onenote.com/api/v1.0/me/notes/';
 
@@ -10,7 +11,7 @@
 		loadNotebookList();
 		for(var i = 0; i < document.querySelectorAll('#refresh-time option').length; i++){
 			if(document.querySelectorAll('#refresh-time option')[i].value 
-				== JSON.parse(fs.readFileSync(__dirname + '/notebooks.json')).refresh_time){
+				== JSON.parse(originalFs.readFileSync(__dirname + '/notebooks.json')).refresh_time){
 				document.querySelectorAll('#refresh-time option')[i].setAttribute('selected', 'selected');
 			}
 		}
@@ -25,7 +26,7 @@
 	};
 
 	window.onbeforeunload = function (e){
-		if(!JSON.parse(fs.readFileSync(__dirname + '/notebooks.json')).today_progress.trim()){
+		if(!JSON.parse(originalFs.readFileSync(__dirname + '/notebooks.json')).today_progress.trim()){
 			dialog.showMessageBox(remote.getCurrentWindow(), {title: "Oops!", buttons:[], type: "warning", 
 							      message: "Please at least select one for today"});
 		}
@@ -40,7 +41,7 @@
 		var refresh_times = document.querySelectorAll('#refresh-time option')
 		var trackIds = [];
 
-		var settings = JSON.parse(fs.readFileSync(__dirname + "/notebooks.json"));
+		var settings = JSON.parse(originalFs.readFileSync(__dirname + "/notebooks.json"));
 
 		for(var i = 0; i < todays.length; i++){
 			if(todays[i].checked){
@@ -60,7 +61,7 @@
 
 		settings.misc_progress = trackIds;
 
-		fs.writeFileSync(__dirname + "/notebooks.json", JSON.stringify(settings));
+		originalFs.writeFileSync(__dirname + "/notebooks.json", JSON.stringify(settings));
 	}
 
 	// pre: when the Settings.html is fully loaded
@@ -113,11 +114,11 @@
 													   name : 'track',
 													   value: sectionJson.value[i].id});
 			// refer to past selected config
-			if(JSON.parse(fs.readFileSync(__dirname + "/notebooks.json")).today_progress == sectionJson.value[i].id){
+			if(JSON.parse(originalFs.readFileSync(__dirname + "/notebooks.json")).today_progress == sectionJson.value[i].id){
 				radioBtn.setAttribute("checked", "checked");
 			}
 
-			if(JSON.parse(fs.readFileSync(__dirname + "/notebooks.json")).misc_progress.includes(sectionJson.value[i].id)){
+			if(JSON.parse(originalFs.readFileSync(__dirname + "/notebooks.json")).misc_progress.includes(sectionJson.value[i].id)){
 				checkBox.setAttribute("checked", "checked");
 			}
 
@@ -167,7 +168,7 @@
 		request.open("GET", ONENOTE_ROOT + path, false);
 		console.log('tag1');
 		request.setRequestHeader("Authorization", 
-				"Bearer " + JSON.parse(fs.readFileSync(__dirname + "/token.json")).access_token);
+				"Bearer " + JSON.parse(originalFs.readFileSync(__dirname + "/token.json")).access_token);
 		console.log('tag2');
 		request.onload = function (){
 			if(this.status == 200 || this.status == 0){
@@ -194,7 +195,7 @@
 		request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 		request.onload = function() {
 			if(this.status == 200 || this.status == 0){
-				fs.writeFileSync(__dirname + "/token.json", this.responseText);
+				originalFs.writeFileSync(__dirname + "/token.json", this.responseText);
 			}else{
 				console.log(this.status);
 			}
@@ -203,6 +204,6 @@
 		request.send("grant_type=refresh_token"
 					+ "&client_id=" + JSON.parse(fs.readFileSync(__dirname + "/oauth2Info.json")).client_id
 					+ "&redirect_uri=" + JSON.parse(fs.readFileSync(__dirname + "/oauth2Info.json")).redirect_uri
-					+ "&refresh_token=" + JSON.parse(fs.readFileSync(__dirname + "/token.json")).refresh_token);
+					+ "&refresh_token=" + JSON.parse(originalFs.readFileSync(__dirname + "/token.json")).refresh_token);
 	}
 })();

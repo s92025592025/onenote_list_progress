@@ -61,7 +61,7 @@
 	 		// save the json file to token.json if there is no connection
 	 		// error
 	 		if(this.status == 200 || this.status == 0){
-	 			fs.writeFile(__dirname + "/token.json", this.responseText, function (e){
+	 			originalFs.writeFile(__dirname + "/token.json", this.responseText, function (e){
 	 				if(e){
 	 					console.log(e);
 	 				}
