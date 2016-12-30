@@ -20,9 +20,9 @@
 
 	 	authWin.loadURL("https://login.live.com/oauth20_authorize.srf"
 	 					+ "?response_type=code"
-	 					+ "&client_id=" + JSON.parse(fs.readFileSync("oauth2Info.json")).client_id
-	 					+ "&redirect_uri=" + JSON.parse(fs.readFileSync("oauth2Info.json")).redirect_uri
-	 					+ "&scope=" + JSON.parse(fs.readFileSync("oauth2Info.json")).scope);
+	 					+ "&client_id=" + JSON.parse(fs.readFileSync(__dirname + "/oauth2Info.json")).client_id
+	 					+ "&redirect_uri=" + JSON.parse(fs.readFileSync(__dirname + "/oauth2Info.json")).redirect_uri
+	 					+ "&scope=" + JSON.parse(fs.readFileSync(__dirname + "/oauth2Info.json")).scope);
 
 	 	authWin.show();
 
@@ -61,14 +61,14 @@
 	 		// save the json file to token.json if there is no connection
 	 		// error
 	 		if(this.status == 200 || this.status == 0){
-	 			fs.writeFile("token.json", this.responseText, function (e){
+	 			fs.writeFile(__dirname + "/token.json", this.responseText, function (e){
 	 				if(e){
 	 					console.log(e);
 	 				}
 	 			});
 	 			// tell main process to redirect main window, return done when it is finished
 	 			// if done, close auth window
-	 			if(ipcRenderer.sendSync('redirect-main-win', 'file:///index.html', 600, 800)
+	 			if(ipcRenderer.sendSync('redirect-main-win', 'file://' + __dirname + '/index.html', 600, 800)
 	 				== 'done'){
 	 				authWin.destroy();
 	 			}
@@ -78,8 +78,8 @@
 	 	};
 
 	 	request.send("grant_type=authorization_code"
-	 				+ "&client_id=" + JSON.parse(fs.readFileSync("oauth2Info.json")).client_id
+	 				+ "&client_id=" + JSON.parse(fs.readFileSync(__dirname + "/oauth2Info.json")).client_id
 	 				+ "&" + code
-	 				+ "&redirect_uri=" + JSON.parse(fs.readFileSync("oauth2Info.json")).redirect_uri);
+	 				+ "&redirect_uri=" + JSON.parse(fs.readFileSync(__dirname + "/oauth2Info.json")).redirect_uri);
 	 }
 })();
