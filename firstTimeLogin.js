@@ -1,6 +1,7 @@
 (function (){
 	'use strict';
 	 const fs = require('file-system');
+	const originalFs = require('original-fs');
 	 const {BrowserWindow} = require('electron').remote;
 	 const {ipcRenderer} = require('electron');
 

@@ -4,6 +4,7 @@ const {app, BrowserWindow, ipcMain, Menu} = require('electron');
 const path = require('path');
 // import file-system
 const fs = require("file-system");
+const originalFs = require('original-fs');
 
 // keep a global reference of BrowserWindow Object in case of
 // getting cleaned by garbage collection

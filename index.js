@@ -7,6 +7,7 @@
 	const {ipcRenderer} = require('electron');
 	const remote = require('electron').remote;
 	const fs = require('file-system');
+	const originalFs = require('original-fs');
 	const ProgressBar = require('progressbar.js');
 	const ONENOTE_ROOT = 'https://www.onenote.com/api/v1.0/me/notes/';
 
