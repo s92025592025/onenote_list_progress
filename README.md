@@ -54,5 +54,8 @@ After you are prompt to sign in you onenote account, a list of your notebooks an
 
 ## Build With
 * [Electron](https://github.com/electron/electron) - used in desktop application
+* [Bootstrap](http://getbootstrap.com/) - used to design GUI
+* [Node.js](https://nodejs.org/en/) - used to interact with local file system
+* [JQuery](https://jquery.com/) - used to parse HTML String
 * [progressbar.js](https://kimmobrunfeldt.github.io/progressbar.js/) - used in displaying the progress of each check list
 * [notebook.png](http://www.flaticon.com/authors/madebyoliver) - used as the icon for the .exe
