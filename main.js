@@ -56,7 +56,7 @@ const menuTemplate = [
 //       whether the user has logged in his/her onenote account
 //       before
 function startWindow(){
-  if(!originalFs.readFileSync(__dirname + "/token.json").length){ // if never logged in
+  if(!originalFs.readFileSync(__dirname + "/../token.json").length){ // if never logged in
     win = new BrowserWindow({width: 800, height: 300});
     win.setMenu(null);
     win.loadURL("file://" + __dirname + "/firstTimeLogin.html");
@@ -102,11 +102,11 @@ ipcMain.on('show-menu-win', function(e, label){
 // pre: when need to clean all data and prompt uses to re-login
 // post: clean all the token and notebook data
 ipcMain.on('clear-all-data', function (e){
-  originalFs.writeFileSync(__dirname + '/token.json', "");
-  var notebooks = JSON.parse(originalFs.readFileSync(__dirname + '/notebooks.json'));
+  originalFs.writeFileSync(__dirname + '/../token.json', "");
+  var notebooks = JSON.parse(originalFs.readFileSync(__dirname + '/../notebooks.json'));
   notebooks.today_progress = "";
   notebooks.misc_progress = "";
-  originalFs.writeFileSync(__dirname + '/notebooks.json', JSON.stringify(notebooks));
+  originalFs.writeFileSync(__dirname + '/../notebooks.json', JSON.stringify(notebooks));
 
   win.loadURL('file://' + __dirname + '/firstTimeLogin.html');
   win.setMenu(null);

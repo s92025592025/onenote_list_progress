@@ -18,7 +18,7 @@
 
 		document.getElementById('logout-btn').onclick = logout;
 
-		if(!JSON.parse(originalFs.readFileSync(__dirname + '/notebooks.json')).today_progress){
+		if(!JSON.parse(originalFs.readFileSync(__dirname + '/../notebooks.json')).today_progress){
 		      ipcRenderer.send('show-menu-win', 'Settings');
 		}else{
 			// this actually shows everything
@@ -58,7 +58,7 @@
 		var today = new Date();
 		today.setMonth(today.getMonth() - 3);
 		onenoteRequest('sections/' 
-						+ JSON.parse(originalFs.readFileSync(__dirname + '/notebooks.json')).today_progress
+						+ JSON.parse(originalFs.readFileSync(__dirname + '/../notebooks.json')).today_progress
 						+ "/pages"
 						+ '?filter=lastModifiedTime%20ge%20'
 						+ today.getFullYear() + '-' 
@@ -74,7 +74,7 @@
 		timer = setInterval(function (){
 				// update today's progress bar
 				onenoteRequest('sections/' 
-							+ JSON.parse(originalFs.readFileSync(__dirname + '/notebooks.json')).today_progress
+							+ JSON.parse(originalFs.readFileSync(__dirname + '/../notebooks.json')).today_progress
 							+ "/pages"
 							+ '?filter=lastModifiedTime%20ge%20'
 							+ today.getFullYear() + '-' 
@@ -82,16 +82,16 @@
 							+ ("0" + today.getDate()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length)
 							, updateProgress);
 				// update misc's progress bar
-				for(var i = 0; i < JSON.parse(originalFs.readFileSync(__dirname +'/notebooks.json')).misc_progress.length; i++){
+				for(var i = 0; i < JSON.parse(originalFs.readFileSync(__dirname +'/../notebooks.json')).misc_progress.length; i++){
 					onenoteRequest('sections/' 
-									+ JSON.parse(originalFs.readFileSync(__dirname + '/notebooks.json')).misc_progress[i] 
+									+ JSON.parse(originalFs.readFileSync(__dirname + '/../notebooks.json')).misc_progress[i] 
 									+ '/pages?filter=lastModifiedTime%20ge%20'
 									+ today.getFullYear() + '-' 
 									+ ("0" + today.getMonth()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length) + '-' 
 									+ ("0" + today.getDate()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length)
 									, misc.updateTracks);
 				}
-			}, JSON.parse(originalFs.readFileSync(__dirname + '/notebooks.json')).refresh_time * 60 * 1000);
+			}, JSON.parse(originalFs.readFileSync(__dirname + '/../notebooks.json')).refresh_time * 60 * 1000);
 
 		// pre: when the program is started or time to update. sectionPages should pass a json file that contains
 		//		pages data in the "today" section, progress should be only refer to the progress bar showing today's
@@ -128,11 +128,11 @@
 
 		// scan through the sections that specified to be tracked in settings, and pass down to updateTracks
 		// to keep the latest version of pages to be show as progress bar
-		for(var i = 0; i < JSON.parse(originalFs.readFileSync(__dirname + '/notebooks.json')).misc_progress.length; i++){
+		for(var i = 0; i < JSON.parse(originalFs.readFileSync(__dirname + '/../notebooks.json')).misc_progress.length; i++){
 			var today  = new Date();
 			today.setMonth(today.getMonth() - 3);
 			onenoteRequest('sections/' 
-							+ JSON.parse(originalFs.readFileSync(__dirname + '/notebooks.json')).misc_progress[i] 
+							+ JSON.parse(originalFs.readFileSync(__dirname + '/../notebooks.json')).misc_progress[i] 
 							+ '/pages?filter=lastModifiedTime%20ge%20'
 							+ today.getFullYear() + '-' 
 							+ ("0" + today.getMonth()).substring(("0" + today.getMonth()).length - 2, ("0" + today.getMonth()).length) + '-' 
@@ -259,7 +259,7 @@
 		var request = new XMLHttpRequest();
 		request.open("GET", ONENOTE_ROOT + path, true);
 		request.setRequestHeader("Authorization", 
-				"Bearer " + JSON.parse(originalFs.readFileSync(__dirname + "/token.json")).access_token);
+				"Bearer " + JSON.parse(originalFs.readFileSync(__dirname + "/../token.json")).access_token);
 
 		request.onload = function (){
 			if(this.status == 200 || this.status == 0){
@@ -284,7 +284,7 @@
 		request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 		request.onload = function (){
 			if(this.status == 200 || this.status == 0){
-				originalFs.writeFileSync(__dirname + '/token.json', this.responseText);
+				originalFs.writeFileSync(__dirname + '/../token.json', this.responseText);
 				onenoteRequest(path, nextStep);
 			}else{
 				console.log(this.status);
@@ -295,7 +295,7 @@
 		request.send("grant_type=refresh_token"
 					+ "&client_id=" + JSON.parse(fs.readFileSync(__dirname + "/oauth2Info.json")).client_id
 					+ "&redirect_uri=" + JSON.parse(fs.readFileSync(__dirname + "/oauth2Info.json")).redirect_uri
-					+ "&refresh_token=" + JSON.parse(originalFs.readFileSync(__dirname + "/token.json")).refresh_token);
+					+ "&refresh_token=" + JSON.parse(originalFs.readFileSync(__dirname + "/../token.json")).refresh_token);
 	}
 
 	// pre: when the user clicked the logout button
