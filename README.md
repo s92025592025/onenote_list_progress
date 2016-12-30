@@ -14,22 +14,22 @@ To let this software know what list in your Onenote section should be tracked, y
 #### In Onenote
 Due to the fact that Onenote doesn't really have the catagory of list(they are actually all "pages" even if you put a todo list in it), you will have to specify dates in the title. Due to the strict for make of javascript, the date should only be expressed in following format.
 
-	1.ISO Date: YYYY-MM-DD
-	```
-	2016-12-30, 2017-01-20, 2015-05-06 ...etc
-	```
-	2.Short Date: MM/DD/YYYY or YYYY/MM/DD
-	```
-	03/04/2016, 2016/04/25 ...etc
-	```
-	3.Long Date: Month(abbr) DD YYYY or DD Month(abbr) YYYY
-	```
-	Mar 06 2015, 31 Dec 2017 ...etc
-	```
-	4.Full Date: DAY Month DD YYYY
-	```
-	Friday December 30 2016, Saturday April 01 2017 ...etc
-	```
+1.ISO Date: YYYY-MM-DD
+```
+2016-12-30, 2017-01-20, 2015-05-06 ...etc
+```
+2.Short Date: MM/DD/YYYY or YYYY/MM/DD
+```
+03/04/2016, 2016/04/25 ...etc
+```
+3.Long Date: Month(abbr) DD YYYY or DD Month(abbr) YYYY
+```
+Mar 06 2015, 31 Dec 2017 ...etc
+```
+4.Full Date: DAY Month DD YYYY
+```
+Friday December 30 2016, Saturday April 01 2017 ...etc
+```
 
 Besides the format of the date, the title should also be different according to it is a progress for today or others.
 ##### For Today
