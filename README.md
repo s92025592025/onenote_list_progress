@@ -31,7 +31,7 @@ Mar 06 2015, 31 Dec 2017 ...etc
 Friday December 30 2016, Saturday April 01 2017 ...etc
 ```
 
-Besides the format of the date, the title should also be different according to it is a progress for today or others.
+Besides the format of the date, the title should also be different according to it is a progress for today or others. The progress will display "0%" if there is no check list for the given day.
 ##### For Today
 If it is suppose to be the check list of what you should do today, make the title of that page on with a single date of that day. **DO NOT PUT ANYTHING ELSE** or this software won't detect anything you should do today. Below is an example of the title you should be naming(if 'today' is 2016/12/30).
 ```
