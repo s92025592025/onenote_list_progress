@@ -101,7 +101,8 @@
 			var flag = true;
 			for(var i = 0; i < JSON.parse(sectionPages).value.length; i++){
 				if(Date.parse(JSON.parse(sectionPages).value[i].title) 
-					&& Math.abs(new Date(JSON.parse(sectionPages).value[i].title.trim()) - (new Date())) <= 1000 * 60 * 60 * 24){
+					&& (new Date()) - new Date(JSON.parse(sectionPages).value[i].title.trim()) < 1000 * 60 * 60 * 24
+					&&  (new Date()) - new Date(JSON.parse(sectionPages).value[i].title.trim()) > 0){
 					flag = false;
 					onenoteRequest('pages/' + JSON.parse(sectionPages).value[i].id + '/content', function (content) {
 						var parser = new DOMParser();
@@ -149,8 +150,10 @@
 				var period = /\[.+~.+\]/.exec(pages.value[i].title);
 				// breaks down to "a day", or "a tie period"
 				if(day && !period && new Date(day[0].substring(1, day[0].length - 1))
-					&& Math.abs(new Date(day[0].substring(1, day[0].length - 1)) - new Date()) 
+					&& new Date() - new Date(day[0].substring(1, day[0].length - 1)) 
 						< 1000 * 60 * 60 * 24
+					&& new Date() - new Date(day[0].substring(1, day[0].length - 1)) 
+						> 0
 					&& checkKey(bars, 'id', pages.value[i].id) < 0){
 					bars.push({
 						id: pages.value[i].id,
